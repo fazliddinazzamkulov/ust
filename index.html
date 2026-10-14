@@ -1,319 +1,1467 @@
-<!doctype html><html lang="kk"><head><meta charset="utf-8"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
-<title>Мерекелік дастархан</title>
+<!doctype html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Электр энергиясы — сабақ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Lora:ital,wght@0,400;1,400&display=swap">
-</head><body>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
 <style>
-/* Layout: ivory notebook paper, royal-blue ink line drawings that draw themselves, autumn leaves in amber.
-   Scenes: autumn branch hero → short note to colleagues → dastarkhan drawing → invitation ticket with live countdown.
-   Single deliberate theme echoing the school poster: blue + gold on light paper. */
+/* Layout: one-screen classroom player. Thin top bar + left tool rail + bottom nav;
+   a 1600x900 slide stage scaled to fit the centre; tool panels slide over from the right.
+   Deliberately single light theme: it is projected in a lit classroom. */
 :root{
-  --paper:#f6f0e3;
-  --paper-hi:#fbf7ee;
-  --ink:#1d3a86;
-  --ink-soft:#4f679f;
-  --gold:#b98a2e;
-  --leaf:#d2702a;
-  --card:#fffaf0;
-  --display:"Cormorant Garamond",Georgia,"Times New Roman",serif;
-  --hand:"Caveat","Segoe Print","Bradley Hand",cursive;
-  --body:"Lora",Georgia,"Times New Roman",serif;
+  --bg:#E8EBF0;        /* chrome, faint blue bias */
+  --paper:#FFFFFF;     /* slide */
+  --ink:#0D1117;
+  --muted:#5A6271;
+  --line:#D4D9E2;
+  --soft:#F3F5F8;
+  --blue:#2340F0;
+  --lime:#D6FF3B;
+  --pink:#FF4F93;
+  --ok:#0E9F4F; --bad:#E5484D; --warn:#E8A400;
+  --g-coal:#3A3F47; --g-hydro:#2340F0; --g-solar:#E8A400; --g-wind:#0FA595; --g-nuclear:#FF4F93;
+  --f-display:"Inter Tight","Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
   color-scheme:light;
 }
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-  color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.7;overflow-x:hidden;
-  background-color:var(--paper);
-  background-image:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .45 0 0 0 0 .38 0 0 0 0 .25 0 0 0 .12 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),
-    radial-gradient(80% 50% at 50% 0%,var(--paper-hi),transparent 70%);
-}
-.wrap{max-width:900px;margin:0 auto;padding-inline:20px}
-h1,h2,h3{font-family:var(--display);font-weight:500;text-wrap:balance;margin:0;line-height:1}
-p{margin:0}
-svg{display:block}
-.hand{font-family:var(--hand);font-weight:500;line-height:1.1}
-.eyebrow{font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold)}
+html,body{height:100%}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);overflow:hidden;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
 
-/* pen line drawings */
-.ink{fill:none;stroke:var(--ink);stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round;filter:url(#pen)}
-.ink .thin{stroke-width:1.3;stroke:var(--ink-soft)}
-.ink .leaf{stroke:var(--leaf)}
-.ink .gold{stroke:var(--gold)}
-.ink [pathLength]{stroke-dasharray:1;stroke-dashoffset:0}
-.play .ink [pathLength]{animation:draw var(--t,1.3s) var(--d,0s) cubic-bezier(.55,.05,.3,1) both}
-@keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
-.rv{transition:opacity 1s ease,transform 1s cubic-bezier(.2,.7,.2,1)}
-.rv.pre{opacity:.1;transform:translateY(30px)}
+/* ---------- app shell ---------- */
+#app{display:grid;height:100%;grid-template-columns:68px minmax(0,1fr);grid-template-rows:56px minmax(0,1fr) 60px;grid-template-areas:"rail top" "rail view" "rail nav"}
+.top{grid-area:top;display:flex;align-items:center;gap:16px;padding-inline:16px;min-width:0}
+.logo{font:800 22px/1 var(--f-display);letter-spacing:-.03em;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.logo b{background:var(--lime);padding:2px 6px;border-radius:5px}
+.ttl{font-size:14px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1}
+.scores{display:flex;gap:6px;flex:none}
+.sc{display:flex;align-items:center;gap:6px;background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:4px 10px 4px 6px;font:700 14px var(--f-mono)}
+.sc i{width:12px;height:12px;border-radius:3px;display:block}
+.chip{display:flex;align-items:center;gap:6px;background:var(--ink);color:#fff;border-radius:999px;padding:6px 12px;font:700 15px var(--f-mono);border:0;cursor:pointer;font-variant-numeric:tabular-nums}
+.chip.end{background:var(--pink)}
+.cnt{font:600 14px var(--f-mono);color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
 
-#leaves{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
-main,header,footer{position:relative;z-index:1}
+.rail{grid-area:rail;display:flex;flex-direction:column;align-items:center;gap:4px;padding-block:12px;background:var(--ink)}
+.rail .sep{flex:1}
+.rb{width:48px;height:48px;border-radius:12px;border:0;background:transparent;color:#C9CED8;display:grid;place-items:center;cursor:pointer;position:relative}
+.rb:hover{background:#222832;color:#fff}
+.rb.on{background:var(--lime);color:var(--ink)}
+.rb .tip{position:absolute;left:58px;top:50%;transform:translateY(-50%);background:var(--ink);color:#fff;font-size:13px;font-weight:600;padding:6px 10px;border-radius:8px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .12s;z-index:40;border:1px solid #2b313b}
+.rb:hover .tip{opacity:1}
 
-/* HERO */
-.hero{padding-block:clamp(40px,8vh,90px) clamp(30px,6vh,70px);text-align:center}
-.hero .wrap{display:flex;flex-direction:column;align-items:center;gap:12px}
-.branch{width:min(460px,92vw);height:auto;margin:20px 0 6px;overflow:visible}
-.hero .hand{font-size:clamp(40px,8vw,70px);transform:rotate(-2deg)}
-.hero h1{font-size:clamp(48px,10vw,104px);letter-spacing:-.01em}
-.hero h1 em{color:var(--gold);font-style:italic}
-.orn{width:min(260px,70vw);height:auto;margin-top:10px}
+.view{grid-area:view;position:relative;overflow:hidden}
+#stage{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform-origin:center center;background:var(--paper);border-radius:14px;box-shadow:0 1px 0 rgba(13,17,23,.06),0 12px 40px rgba(13,17,23,.10);overflow:hidden}
+#pen{position:absolute;inset:0;width:1600px;height:900px;z-index:30;pointer-events:none;touch-action:none}
+#pen.on{pointer-events:auto;cursor:crosshair}
 
-/* NOTE */
-.note{padding-block:clamp(40px,8vw,80px)}
-.note-card{position:relative;max-width:600px;margin:0 auto;text-align:center;padding:clamp(34px,6vw,56px) clamp(24px,6vw,56px);
-  background:var(--card);transform:rotate(.6deg);box-shadow:0 2px 0 rgba(29,58,134,.06),0 22px 44px rgba(29,58,134,.14)}
-.note-card::before{content:"";position:absolute;left:50%;top:-14px;width:110px;height:28px;margin-left:-55px;
-  background:rgba(185,138,46,.28);transform:rotate(-3deg)}
-.note-card p{font-size:clamp(18px,2.4vw,21px);font-style:italic;line-height:1.75}
-.note-card p + p{margin-top:16px}
+.nav{grid-area:nav;display:flex;align-items:center;justify-content:center;gap:14px;padding-inline:16px;min-width:0}
+.nb{height:40px;min-width:40px;padding-inline:12px;border-radius:10px;border:1px solid var(--line);background:var(--paper);display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:600;font-size:14px}
+.nb:hover{border-color:var(--ink)}
+.dots{display:flex;gap:5px;overflow-x:auto;max-width:60vw;padding:4px}
+.dots button{width:22px;height:8px;border-radius:4px;border:0;background:#C8CED9;cursor:pointer;flex:none;padding:0}
+.dots button.on{background:var(--ink);width:34px}
+.dots button.opt{background:#E0E4EB;outline:1px dashed #AEB6C3}
+.dots button.opt.on{background:var(--ink)}
 
-/* DASTARKHAN + INVITE */
-.invite{padding-block:clamp(30px,6vw,70px) clamp(60px,10vw,110px)}
-.dastarkhan{width:min(440px,90vw);height:auto;margin:0 auto}
-.invite .head{text-align:center;margin:8px 0 26px}
-.invite .head .hand{font-size:clamp(46px,9vw,80px);color:var(--ink)}
-.invite .head p{margin-top:8px;font-style:italic;color:var(--ink-soft);font-size:clamp(17px,2.2vw,19px)}
+/* ---------- side panel ---------- */
+.panel{position:fixed;top:0;right:0;bottom:0;width:min(440px,100vw);background:var(--paper);border-left:1px solid var(--line);z-index:60;display:flex;flex-direction:column;transform:translateX(102%);transition:transform .2s ease;box-shadow:-20px 0 50px rgba(13,17,23,.12)}
+.panel.open{transform:none}
+.ph{display:flex;align-items:center;gap:10px;padding:16px 18px;border-bottom:1px solid var(--line)}
+.ph h3{margin:0;font:800 20px var(--f-display);flex:1;letter-spacing:-.01em}
+.pb{flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:14px;min-height:0}
+.x{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--paper);display:grid;place-items:center;cursor:pointer}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.pbtn{border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:9px 12px;font-weight:600;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.pbtn:hover{border-color:var(--ink)}
+.pbtn.dark{background:var(--ink);color:#fff;border-color:var(--ink)}
+.pbtn.lime{background:var(--lime);border-color:var(--lime)}
+.hint{font-size:13px;color:var(--muted);line-height:1.45;margin:0}
+.lbl{font:700 12px var(--f-body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+textarea.ed{width:100%;min-height:200px;border:1px solid var(--line);border-radius:10px;padding:10px;font:14px/1.5 var(--f-body);resize:vertical}
 
-.ticket{position:relative;max-width:560px;margin:0 auto;background:var(--card);border-radius:14px;
-  box-shadow:0 22px 50px rgba(29,58,134,.18);overflow:hidden}
-.ticket .top{padding:26px 28px 22px;display:grid;gap:16px}
-.row{display:grid;grid-template-columns:40px 1fr;gap:14px;align-items:center}
-.row svg{width:36px;height:36px}
-.row .k{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
-.row .v{font-family:var(--display);font-size:clamp(26px,4.4vw,32px);line-height:1.1;font-weight:600}
-.tear{position:relative;height:0;border-top:2px dashed rgba(29,58,134,.3);margin:0 18px}
-.tear::before,.tear::after{content:"";position:absolute;top:-13px;width:24px;height:24px;border-radius:50%;background:var(--paper)}
-.tear::before{left:-30px}.tear::after{right:-30px}
-.ticket .bottom{padding:20px 28px 26px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between}
-.count{min-width:0}
-.count .k{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-soft)}
-.count .v{font-family:var(--hand);font-size:34px;line-height:1.1;font-variant-numeric:tabular-nums}
-.btn{font-family:var(--hand);font-size:26px;color:var(--card);background:var(--ink);border:0;border-radius:999px;
-  padding:6px 26px 9px;cursor:pointer;transition:transform .2s ease,background .2s ease}
-.btn:hover{transform:translateY(-2px) rotate(-1deg);background:#16306f}
-.btn:focus-visible{outline:2px dashed var(--ink);outline-offset:4px}
-.btn.done{background:var(--gold)}
-.sign{text-align:center;margin-top:34px}
-.sign .hand{font-size:clamp(30px,5vw,40px)}
-.sign small{display:block;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-top:4px}
+.st{border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 10px;align-items:center}
+.st .nm{font-weight:700;font-size:15px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:6px}
+.st .nm i{width:10px;height:10px;border-radius:3px;flex:none}
+.st .ctl{display:flex;gap:6px;align-items:center}
+.st .ln2{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.mini{height:30px;min-width:30px;border-radius:8px;border:1px solid var(--line);background:var(--paper);cursor:pointer;font-weight:700;font-size:14px;padding-inline:8px}
+.mini.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.pts{font:700 16px var(--f-mono);min-width:26px;text-align:center;font-variant-numeric:tabular-nums}
+select.sel{height:30px;border:1px solid var(--line);border-radius:8px;background:var(--paper);font:600 13px var(--f-body);padding-inline:6px}
+.focus{font:700 11px var(--f-mono);background:var(--lime);border-radius:5px;padding:2px 5px}
 
-footer{text-align:center;padding-block:22px 30px;font-family:var(--hand);font-size:21px;color:var(--ink-soft)}
+.gcard{border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.gtop{display:flex;align-items:center;gap:10px}
+.gtop i{width:16px;height:16px;border-radius:4px}
+.gtop b{flex:1;font-size:16px}
+.gmem{font-size:13px;color:var(--muted);line-height:1.5}
 
-@media (max-width:520px){
-  .ticket .bottom{flex-direction:column;align-items:stretch;text-align:center}
-}
-@media (prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
-  .rv.pre{opacity:1;transform:none}
+.big{font:800 64px/1 var(--f-mono);text-align:center;font-variant-numeric:tabular-nums}
+.tl{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tlb{border:0;border-radius:14px;padding:16px 8px;cursor:pointer;color:#fff;display:flex;flex-direction:column;align-items:center;gap:6px;font-weight:700}
+.tlb span{font:800 36px var(--f-mono)}
+.tlbar{display:flex;height:14px;border-radius:7px;overflow:hidden;background:var(--soft)}
+
+.gl{display:grid;grid-template-columns:1fr;gap:8px}
+.gl div{border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px;line-height:1.45}
+.gl b{display:block;font-size:15px}
+.gl em{font-style:normal;color:var(--blue);font-weight:600}
+
+.ov{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.ovb{border:1px solid var(--line);border-radius:12px;background:var(--paper);padding:10px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:4px;min-height:74px}
+.ovb.on{border:2px solid var(--ink)}
+.ovb small{font:700 11px var(--f-mono);color:var(--muted)}
+.ovb span{font-weight:700;font-size:14px;line-height:1.25}
+.ovb em{font-style:normal;font-size:11px;font-weight:700;color:var(--muted);border:1px dashed #AEB6C3;border-radius:5px;padding:1px 5px;align-self:flex-start}
+
+.notes{font-size:16px;line-height:1.55;white-space:pre-line}
+.notes .tm{display:inline-block;font:700 13px var(--f-mono);background:var(--lime);border-radius:6px;padding:3px 8px;margin-bottom:6px}
+
+.penbar{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);background:var(--ink);border-radius:999px;padding:6px;display:none;gap:6px;z-index:50}
+.penbar.on{display:flex}
+.pc{width:30px;height:30px;border-radius:50%;border:3px solid transparent;cursor:pointer}
+.pc.on{border-color:#fff}
+.penbar .pbtn{border-radius:999px;padding:5px 12px;font-size:13px}
+
+/* ---------- stage overlays ---------- */
+.sov{position:absolute;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;background:rgba(13,17,23,.55)}
+.pick{background:var(--paper);border-radius:28px;padding:56px 90px;text-align:center;min-width:900px}
+.pick .who{font:800 120px/1.05 var(--f-display);letter-spacing:-.03em}
+.pick .grp{font:600 30px var(--f-body);color:var(--muted);margin-top:16px}
+.ftimer{position:absolute;right:28px;top:24px;z-index:35;background:var(--ink);color:#fff;border-radius:22px;padding:14px 26px;font:800 64px/1 var(--f-mono);font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:16px}
+.ftimer small{font:600 18px var(--f-body);color:#AEB6C3}
+.ftimer.end{background:var(--pink)}
+.ftimer.warn{background:var(--warn);color:var(--ink)}
+
+/* ---------- slides (1600x900 coordinate space) ---------- */
+.sl{position:absolute;inset:0;padding:60px 84px 64px;display:none;flex-direction:column;gap:26px;font-size:28px;line-height:1.36;background:var(--paper)}
+.sl.on{display:flex}
+.eb{font:700 19px/1 var(--f-body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.eb .tag{letter-spacing:.06em;font:700 15px var(--f-mono);border:2px solid var(--ink);color:var(--ink);padding:5px 9px;border-radius:7px}
+.h1{font:800 88px/1.02 var(--f-display);letter-spacing:-.03em;margin:0;text-wrap:balance}
+.h2{font:800 58px/1.05 var(--f-display);letter-spacing:-.025em;margin:0;text-wrap:balance}
+.mk{background:var(--lime);padding:0 .1em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.sub{font-size:26px;color:var(--muted);margin:0}
+.lg{display:inline-block;font:700 14px/1 var(--f-mono);padding:5px 7px;border-radius:6px;vertical-align:middle;margin-right:10px;border:2px solid currentColor}
+.lg.kk{color:var(--blue)} .lg.ru{color:var(--ink)} .lg.en{color:var(--pink)}
+.src{margin-top:auto;font-size:17px;color:var(--muted)}
+.cols{display:grid;gap:36px;grid-template-columns:repeat(2,minmax(0,1fr))}
+.box{border:2px solid var(--line);border-radius:22px;padding:28px 32px;display:flex;flex-direction:column;gap:14px}
+.box.ink{background:var(--ink);color:#fff;border-color:var(--ink)}
+.box h4{margin:0;font:800 30px/1.1 var(--f-display);letter-spacing:-.01em}
+.box p{margin:0}
+.k{font:700 16px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.box.ink .k{color:#AEB6C3}
+.btn{font:700 22px/1 var(--f-body);padding:15px 24px;border-radius:14px;border:2px solid var(--ink);background:var(--paper);cursor:pointer;display:inline-flex;align-items:center;gap:10px}
+.btn:hover{background:var(--soft)}
+.btn.dark{background:var(--ink);color:#fff}
+.btn.dark:hover{background:#262c36}
+.btn.lime{background:var(--lime);border-color:var(--lime)}
+.btn svg.i{width:26px;height:26px}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.hide{visibility:hidden}
+
+/* title */
+.s-title{flex-direction:row;gap:56px;padding:0}
+.s-title .l{flex:1;padding:80px 0 64px 84px;display:flex;flex-direction:column;gap:30px}
+.s-title .r{width:520px;background:var(--ink);position:relative;display:flex;flex-direction:column;justify-content:flex-end;padding:56px 48px;gap:14px;color:#fff}
+.s-title .r .disc{position:absolute;top:70px;left:70px;width:380px;height:380px;border-radius:50%;background:var(--lime);display:grid;place-items:center}
+.s-title .r .disc svg{width:190px;height:190px;fill:var(--ink)}
+.srcl{display:flex;align-items:center;gap:14px;font:600 24px var(--f-body)}
+.srcl i{width:22px;height:22px;border-radius:5px}
+.srcl span{color:#8C94A3;font:500 18px var(--f-mono);margin-left:auto}
+.tri p{margin:0;font-size:26px;color:var(--muted);line-height:1.35}
+.meta{margin-top:auto;font-size:21px;color:var(--muted);display:flex;flex-direction:column;gap:6px}
+.meta b{color:var(--ink)}
+
+/* hook */
+.eq{display:flex;align-items:center;gap:48px;margin-top:20px}
+.eq .one{font:800 170px/0.9 var(--f-display);letter-spacing:-.04em}
+.eq .one small{display:block;font:700 34px var(--f-mono);letter-spacing:0;margin-top:14px;color:var(--muted)}
+.eq .is{font:800 120px/1 var(--f-display);color:#C8CED9}
+.rev{display:flex;flex-direction:column;gap:18px}
+.rv{border:2px dashed #B9C0CC;border-radius:20px;padding:16px 28px;min-width:520px;cursor:pointer;background:var(--paper);text-align:left;font:inherit}
+.rv b{font:800 52px/1 var(--f-display);letter-spacing:-.02em;display:block}
+.rv span{font-size:22px;color:var(--muted)}
+.rv.hid b,.rv.hid span{visibility:hidden}
+.rv.hid{background:repeating-linear-gradient(-45deg,var(--soft) 0 14px,var(--paper) 14px 28px)}
+.rv:not(.hid){border-style:solid;border-color:var(--ink)}
+
+/* goals */
+.lvl{display:grid;grid-template-columns:200px minmax(0,1fr);gap:12px 20px;align-items:baseline}
+.lvl dt{font:800 24px var(--f-display)}
+.lvl dd{margin:0}
+.rq{border-left:6px solid var(--blue);padding:6px 0 6px 22px;font-size:22px}
+.rq b{display:block;font:700 15px var(--f-mono);letter-spacing:.08em;color:var(--blue);margin-bottom:6px}
+
+/* descriptors */
+.desc{display:flex;flex-direction:column;gap:16px}
+.desc div{display:grid;grid-template-columns:90px minmax(0,1fr) 120px;gap:24px;align-items:center;border-bottom:2px solid var(--line);padding-bottom:16px}
+.desc b{font:800 34px var(--f-mono)}
+.desc span.p{font:700 20px var(--f-mono);color:var(--muted);text-align:right}
+
+/* glossary */
+.gtab{width:100%;border-collapse:collapse;font-size:25px}
+.gtab th{text-align:left;font:700 16px var(--f-mono);letter-spacing:.08em;padding:0 16px 12px 0;border-bottom:3px solid var(--ink)}
+.gtab td{padding:11px 16px 11px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.gtab td:first-child{font-weight:700}
+.say{border:0;background:transparent;cursor:pointer;color:var(--pink);font:inherit;font-weight:700;padding:0;display:inline-flex;align-items:center;gap:8px;text-align:left}
+.say svg.i{width:20px;height:20px}
+
+/* calc */
+.calc{display:grid;grid-template-columns:520px minmax(0,1fr);gap:40px;flex:1;min-height:0}
+.inp{display:flex;flex-direction:column;gap:10px}
+.inp label{font:700 20px var(--f-body)}
+.inp .w{display:flex;align-items:center;gap:16px}
+.inp input[type=number]{width:200px;height:72px;border:2px solid var(--ink);border-radius:14px;font:800 40px var(--f-mono);padding-inline:16px}
+.inp input[type=range]{flex:1;accent-color:var(--ink);height:30px}
+.inp .u{font:600 20px var(--f-mono);color:var(--muted)}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.tile{border-radius:20px;padding:22px 26px;background:var(--soft);display:flex;flex-direction:column;gap:6px}
+.tile .v{font:800 56px/1 var(--f-mono);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.tile .v small{font-size:24px;color:var(--muted);margin-left:6px}
+.tile .t{font-size:20px;color:var(--muted)}
+.tile.hl{background:var(--lime)}
+.tile.dk{background:var(--ink);color:#fff}
+.tile.dk .t,.tile.dk .v small{color:#AEB6C3}
+.tasks{font-size:22px;display:flex;flex-direction:column;gap:8px;margin:0;padding-left:28px}
+
+/* sort */
+.pool{display:flex;flex-wrap:wrap;gap:14px;min-height:76px;align-content:flex-start}
+.card{font:700 24px var(--f-body);padding:16px 22px;border-radius:14px;border:2px solid var(--ink);background:var(--paper);cursor:grab;user-select:none}
+.card.sel{background:var(--ink);color:#fff}
+.card.ok{border-color:var(--ok);background:#E3F6EA}
+.card.bad{border-color:var(--bad);background:#FDE7E8}
+.bins{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px;flex:1;min-height:0}
+.bin{border:3px dashed #B9C0CC;border-radius:24px;padding:22px;display:flex;flex-direction:column;gap:14px;cursor:pointer}
+.bin.over{border-color:var(--ink);background:var(--soft)}
+.bin h4{margin:0;font:800 30px var(--f-display)}
+.bin h4 small{display:block;font:600 18px var(--f-body);color:var(--muted);margin-top:4px}
+.bin .pool{flex:1}
+
+/* bars */
+.bars{display:flex;flex-direction:column;gap:22px}
+.bar{display:grid;grid-template-columns:360px minmax(0,1fr) 150px;gap:24px;align-items:center}
+.bar .n{font-weight:700;font-size:26px}
+.bar .n small{display:block;font-size:18px;color:var(--muted);font-weight:500}
+.bar .tr{height:54px;background:var(--soft);border-radius:10px;overflow:hidden}
+.bar .f{height:100%;border-radius:10px}
+.bar .p{font:800 40px var(--f-mono);text-align:right;font-variant-numeric:tabular-nums}
+.kz{display:grid;grid-template-columns:minmax(0,1fr) 640px;gap:44px;flex:1;min-height:0}
+.facts{display:flex;flex-direction:column;gap:16px}
+.fact{display:grid;grid-template-columns:200px minmax(0,1fr);gap:20px;align-items:baseline;border-bottom:2px solid var(--line);padding-bottom:14px}
+.fact b{font:800 52px/1 var(--f-mono);letter-spacing:-.02em}
+.fact span{font-size:23px}
+.chart{display:flex;flex-direction:column;gap:12px}
+.colsch{display:flex;align-items:flex-end;gap:22px;height:250px;border-bottom:3px solid var(--ink);padding-inline:6px}
+.cc{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:8px;height:100%}
+.cc .c{width:100%;background:var(--ink);border-radius:8px 8px 0 0}
+.cc .c.goal{background:repeating-linear-gradient(-45deg,var(--lime) 0 10px,#C2EA25 10px 20px)}
+.cc b{font:800 26px var(--f-mono)}
+.xl{display:flex;gap:22px;padding-inline:6px}
+.xl span{flex:1;text-align:center;font:600 19px var(--f-mono);color:var(--muted)}
+.stack{display:flex;height:58px;border-radius:12px;overflow:hidden}
+.stack div{display:flex;align-items:center;justify-content:center;color:#fff;font:700 17px var(--f-mono);white-space:nowrap;overflow:hidden}
+.legend{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:18px}
+.legend span{display:flex;align-items:center;gap:8px}
+.legend i{width:14px;height:14px;border-radius:3px;display:block}
+
+/* experts */
+.gt{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px}
+.gtile{border-radius:22px;padding:26px 22px;color:#fff;border:0;cursor:pointer;display:flex;flex-direction:column;gap:10px;text-align:left;min-height:220px}
+.gtile b{font:800 40px/1 var(--f-display);letter-spacing:-.02em}
+.gtile span{font:600 20px var(--f-mono);opacity:.85}
+.gtile em{margin-top:auto;font-style:normal;font-weight:700;font-size:19px;display:flex;align-items:center;gap:8px}
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+.stp{border-top:4px solid var(--ink);padding-top:14px;font-size:23px}
+.stp b{display:block;font:800 18px var(--f-mono);margin-bottom:6px}
+.dcard{background:var(--paper);border-radius:26px;width:1380px;max-height:820px;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) 560px}
+.dcard .a{padding:44px 48px;display:flex;flex-direction:column;gap:20px}
+.dcard .b{padding:44px 40px;background:var(--soft);display:flex;flex-direction:column;gap:14px}
+.chain{font:700 24px var(--f-mono);background:var(--lime);padding:14px 18px;border-radius:12px;line-height:1.4}
+.dt{width:100%;border-collapse:collapse;font-size:21px}
+.dt td{padding:10px 0;border-bottom:1px solid var(--line)}
+.dt td:first-child{width:42%;padding-right:12px}
+.dt td:last-child{text-align:right;font:700 19px var(--f-mono)}
+.think{display:flex;flex-direction:column;gap:8px;font-size:22px}
+.think div::before{content:"?";display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--ink);color:#fff;font:800 18px var(--f-mono);margin-right:12px}
+
+/* levels */
+.lv3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;flex:1;min-height:0}
+.lv{border:2px solid var(--line);border-radius:22px;padding:24px 26px;display:flex;flex-direction:column;gap:12px;font-size:22px}
+.lv .badge{font:800 22px var(--f-mono);width:48px;height:48px;border-radius:12px;display:grid;place-items:center;background:var(--soft)}
+.lv.b .badge{background:var(--lime)} .lv.c .badge{background:var(--ink);color:#fff}
+.lv .ans{margin-top:auto;border-radius:14px;background:var(--soft);padding:14px 16px;font:700 22px/1.45 var(--f-mono)}
+.lv .ans.hid{color:transparent;background:repeating-linear-gradient(-45deg,var(--soft) 0 12px,var(--paper) 12px 24px);user-select:none}
+.formula{font:700 22px var(--f-mono);color:var(--blue)}
+
+/* experiment */
+.mt{width:100%;border-collapse:collapse;font-size:22px}
+.mt th{text-align:left;font:700 15px var(--f-mono);letter-spacing:.08em;color:var(--muted);padding:0 12px 10px 0;border-bottom:2px solid var(--ink)}
+.mt td{padding:8px 12px 8px 0;border-bottom:1px solid var(--line)}
+.mt input{width:130px;height:52px;border:2px solid var(--line);border-radius:10px;font:700 26px var(--f-mono);padding-inline:10px}
+.mt input:focus{border-color:var(--ink)}
+.mt .pv{font:800 30px var(--f-mono)}
+
+/* council */
+.frames{display:flex;flex-direction:column;gap:14px}
+.frame{border-left:6px solid var(--pink);padding:8px 0 8px 20px;font-size:28px;font-weight:600}
+.order{display:flex;gap:14px;flex-wrap:wrap}
+.ob{border:0;border-radius:16px;padding:16px 20px;color:#fff;font:700 22px var(--f-body);cursor:pointer;display:flex;align-items:center;gap:10px}
+
+/* mix builder */
+.mix{display:grid;grid-template-columns:minmax(0,1fr) 560px;gap:44px;flex:1;min-height:0}
+.sliders{display:flex;flex-direction:column;gap:14px}
+.sr{display:grid;grid-template-columns:200px minmax(0,1fr) 92px;gap:18px;align-items:center}
+.sr .n{display:flex;align-items:center;gap:12px;font-weight:700;font-size:24px}
+.sr .n i{width:18px;height:18px;border-radius:4px}
+.sr input{width:100%;height:30px}
+.sr .p{font:800 32px var(--f-mono);text-align:right;font-variant-numeric:tabular-nums}
+.total{font:700 22px var(--f-mono);display:flex;align-items:center;gap:12px}
+.total b{padding:6px 12px;border-radius:10px;background:var(--soft)}
+.total b.bad{background:#FDE7E8;color:var(--bad)}
+.total b.ok{background:#E3F6EA;color:var(--ok)}
+.res{display:flex;flex-direction:column;gap:14px}
+.rs{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;border-radius:18px;padding:16px 22px;background:var(--soft);gap:4px 12px}
+.rs .t{font-size:20px;color:var(--muted)}
+.rs .v{font:800 48px/1 var(--f-mono);font-variant-numeric:tabular-nums}
+.rs .v small{font-size:20px;color:var(--muted);margin-left:6px}
+.pill{font:700 17px var(--f-body);padding:8px 14px;border-radius:999px;white-space:nowrap}
+.pill.ok{background:#E3F6EA;color:var(--ok)}
+.pill.bad{background:#FDE7E8;color:var(--bad)}
+.presets{display:flex;gap:10px;flex-wrap:wrap}
+.presets .btn{font-size:18px;padding:11px 16px;border-radius:12px}
+
+/* quiz */
+.qwrap{display:flex;flex-direction:column;gap:24px;flex:1;min-height:0}
+.qtop{display:flex;align-items:center;gap:16px}
+.qn{font:800 22px var(--f-mono)}
+.qbar{flex:1;height:10px;background:var(--soft);border-radius:5px;overflow:hidden}
+.qbar div{height:100%;background:var(--ink)}
+.qq{font:800 50px/1.12 var(--f-display);letter-spacing:-.02em;margin:0;text-wrap:balance}
+.opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.opt{border:2px solid var(--ink);background:var(--paper);border-radius:18px;padding:22px 26px;font:700 30px var(--f-body);display:flex;align-items:center;gap:20px;text-align:left;cursor:pointer}
+.opt b{font:800 26px var(--f-mono);width:52px;height:52px;border-radius:12px;background:var(--soft);display:grid;place-items:center;flex:none}
+.opt.ok{background:#E3F6EA;border-color:var(--ok)}
+.opt.ok b{background:var(--ok);color:#fff}
+.opt.dim{opacity:.4}
+.award{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:20px;font-weight:600}
+.aw{border:3px solid transparent;border-radius:14px;padding:10px 16px;color:#fff;font:700 20px var(--f-body);cursor:pointer;opacity:.45}
+.aw.on{opacity:1;border-color:var(--ink)}
+.qctl{display:flex;gap:12px;margin-top:auto;align-items:center}
+.final{display:flex;flex-direction:column;gap:18px}
+
+/* vote */
+.vr{display:grid;grid-template-columns:260px 60px minmax(0,1fr) 60px 90px;gap:16px;align-items:center}
+.vr .n{display:flex;align-items:center;gap:12px;font:700 26px var(--f-body)}
+.vr .n i{width:20px;height:20px;border-radius:5px}
+.vr .tr{height:50px;background:var(--soft);border-radius:10px;overflow:hidden}
+.vr .f{height:100%;border-radius:10px;transition:width .25s}
+.vr .c{font:800 38px var(--f-mono);text-align:right}
+.vb{width:60px;height:50px;border-radius:12px;border:2px solid var(--ink);background:var(--paper);font:800 28px var(--f-mono);cursor:pointer}
+
+/* reflection */
+.tix{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+.tk{min-height:0!important;padding:20px 26px!important}.tk .s{font-size:32px!important}
+.xtra{gap:18px;padding-top:48px}.xtra .h2{font-size:46px}.xtra .lv{font-size:19px;padding:16px 20px;gap:8px}.xtra .lv .ans{font-size:18px;padding:10px 12px}.xtra .lv .badge{width:38px;height:38px;font-size:18px}
+.rcnt{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:16px;align-items:stretch}
+.rcb{border:0;border-radius:20px;color:#fff;display:flex;align-items:center;gap:16px;padding:16px 22px;min-height:150px;cursor:pointer;text-align:left;touch-action:manipulation;user-select:none}
+.rcb b{font:800 60px/1 var(--f-mono);min-width:70px}
+.rcb span{font:700 24px/1.15 var(--f-body)}
+.rcb span small{display:block;font:600 17px var(--f-body);opacity:.85}
+.rcb:active{transform:scale(.98)}
+.rcx{display:flex;flex-direction:column;gap:8px;justify-content:center}
+.rcx .btn{font-size:16px;padding:9px 12px}
+.tk{border-radius:22px;padding:28px;display:flex;flex-direction:column;gap:14px;min-height:230px}
+.tk .s{font:800 40px/1.1 var(--f-display);letter-spacing:-.02em}
+.hw{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:30px}
+
+/* final */
+.s-end{justify-content:center;gap:34px}
+.s-end .q{font:800 120px/1 var(--f-display);letter-spacing:-.04em;margin:0;text-wrap:balance}
+
+/* teams slide */
+.teams{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:36px;flex:1;min-height:0}
+.team{border-radius:26px;padding:28px 32px;display:flex;flex-direction:column;gap:14px;border:3px solid var(--tc)}
+.team .th{display:flex;align-items:center;gap:16px}
+.team .th i{width:26px;height:26px;border-radius:7px;background:var(--tc)}
+.team .th b{font:800 40px/1 var(--f-display);letter-spacing:-.02em;flex:1}
+.team .th span{font:700 20px var(--f-mono);color:var(--muted)}
+.team .sub2{font:600 22px var(--f-body);color:var(--muted);margin-top:-6px}
+.mem{display:grid;grid-template-columns:minmax(0,1fr);gap:9px}
+.mem div{display:flex;align-items:center;gap:14px;font-size:26px;font-weight:600;min-width:0}
+.mem div span.nm2{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lvb{font:800 17px var(--f-mono);width:34px;height:34px;border-radius:9px;display:grid;place-items:center;flex:none;background:var(--soft)}
+.lvb.A{background:var(--lime)} .lvb.C{background:var(--ink);color:#fff}
+.fcs{color:var(--blue);flex:none;display:grid;place-items:center}
+.fcs svg.i{width:24px;height:24px}
+.tstat svg.i{width:22px;height:22px;color:var(--blue)}
+.tstat{display:flex;gap:18px;margin-top:auto;font:700 20px var(--f-mono);flex-wrap:wrap}
+.tstat span{background:var(--soft);border-radius:10px;padding:8px 12px}
+.lvlpill{font:800 11px var(--f-mono);border-radius:5px;padding:2px 5px;background:var(--soft)}
+.lvlpill.A{background:var(--lime)} .lvlpill.C{background:var(--ink);color:#fff}
+/* map */
+.mapw{display:grid;grid-template-columns:minmax(0,1fr) 430px;gap:26px;flex:1;min-height:0}
+.mapsvg{width:100%;height:100%}
+.mapsvg path.rg{stroke:#fff;stroke-width:1.6;cursor:pointer;transition:opacity .15s}
+.mapsvg path.rg:hover{opacity:.82}
+.mapsvg path.rg.sel{stroke:var(--ink);stroke-width:4}
+.mapsvg .mk2 circle{stroke:#fff;stroke-width:2.5}
+.mapsvg .mk2 text{font:700 15px var(--f-body);fill:var(--ink);paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round}
+.mapsvg .home2{font:800 14px var(--f-mono);fill:var(--ink)}
+.rinfo{border-radius:22px;background:var(--soft);padding:24px 26px;display:flex;flex-direction:column;gap:12px;min-height:0;overflow:hidden}
+.rinfo h4{margin:0;font:800 36px/1.05 var(--f-display);letter-spacing:-.02em}
+.rinfo .kv{display:grid;grid-template-columns:150px minmax(0,1fr);gap:8px 12px;font-size:20px;align-items:baseline}
+.rinfo .kv b{font:700 14px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.rinfo ul{margin:0;padding-left:22px;font-size:20px;display:flex;flex-direction:column;gap:6px}
+.bal{font:700 18px var(--f-body);border-radius:999px;padding:5px 12px;justify-self:start}
+.bal.plus{background:#E3F6EA;color:var(--ok)} .bal.eq{background:#FFF3D1;color:#8A6200} .bal.minus{background:#FDE7E8;color:var(--bad)} .bal.na{background:#E8EBF0;color:var(--muted)}
+.mleg{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:17px}
+.mleg span{display:flex;align-items:center;gap:6px}
+.mleg i{width:14px;height:14px;border-radius:3px}
+/* race */
+.race{display:flex;flex-direction:column;gap:14px;flex:1;min-height:0;touch-action:manipulation}
+.tracks{display:flex;flex-direction:column;gap:10px}
+.track{display:grid;grid-template-columns:150px minmax(0,1fr) 110px;align-items:center;gap:14px}
+.plant{height:66px;border-radius:16px;background:var(--tc);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font:800 18px var(--f-display)}
+.plant svg{width:34px;height:34px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.wire{position:relative;height:66px;display:flex;align-items:center}
+.wire .ln{position:absolute;left:0;right:0;top:50%;height:8px;margin-top:-4px;background:#E2E6EC;border-radius:4px}
+.wire .fl{position:absolute;left:0;top:50%;height:8px;margin-top:-4px;background:var(--tc);border-radius:4px;transition:width .35s ease}
+.wire .nodes{position:relative;display:flex;justify-content:space-between;width:100%}
+.wire .nd{width:22px;height:22px;border-radius:50%;background:#fff;border:4px solid #D4D9E2;transition:all .25s}
+.wire .nd.on{border-color:var(--tc);background:var(--tc)}
+.wire .spark{position:absolute;top:50%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:var(--lime);border:4px solid var(--ink);display:grid;place-items:center;transition:left .35s ease;z-index:2}
+.wire .spark svg{width:24px;height:24px;fill:var(--ink)}
+.house{height:66px;border-radius:16px;border:3px solid var(--tc);display:flex;flex-direction:column;align-items:center;justify-content:center;font:800 16px var(--f-display);gap:2px;background:var(--paper)}
+.house svg{width:36px;height:36px;fill:none;stroke:var(--ink);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.house.lit{background:var(--lime)}
+.sides{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;flex:1;min-height:0}
+.side{border-radius:24px;border:3px solid var(--tc);padding:14px 20px;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden}
+.side .sh{display:flex;align-items:center;gap:12px;font:800 22px var(--f-display)}
+.side .sh i{width:20px;height:20px;border-radius:5px;background:var(--tc)}
+.side .sh span{margin-left:auto;font:800 30px var(--f-mono);color:var(--tc)}
+.side .q{font:800 28px/1.15 var(--f-display);letter-spacing:-.01em;min-height:66px;text-wrap:balance}
+.side .ops{display:flex;flex-direction:column;gap:10px}
+.side .op{border:3px solid var(--ink);background:var(--paper);border-radius:16px;padding:0 20px;height:64px;font:700 26px var(--f-body);text-align:left;cursor:pointer;display:flex;align-items:center;gap:16px;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.side .op b{font:800 22px var(--f-mono);width:40px;height:40px;border-radius:10px;background:var(--soft);display:grid;place-items:center;flex:none}
+.side .op.ok{background:#E3F6EA;border-color:var(--ok)}
+.side .op.no{background:#FDE7E8;border-color:var(--bad)}
+.side .lock{position:absolute;inset:0;background:rgba(13,17,23,.82);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font:800 34px var(--f-display);text-align:center}
+.side .lock span{font:800 90px/1 var(--f-mono);color:var(--lime)}
+.side .lock small{font:600 20px var(--f-body);color:#C9CED8}
+.rctl{display:flex;gap:12px;align-items:center;justify-content:center}
+.rwin{position:absolute;inset:0;z-index:45;display:flex;align-items:center;justify-content:center;background:rgba(13,17,23,.6)}
+.rwin div{background:var(--paper);border-radius:30px;padding:50px 80px;text-align:center;display:flex;flex-direction:column;gap:16px;align-items:center;border:6px solid var(--tc)}
+.rwin b{font:800 92px/1 var(--f-display);letter-spacing:-.03em}
+.rwin span{font:600 28px var(--f-body);color:var(--muted)}
+.cdown{position:absolute;inset:0;z-index:44;display:grid;place-items:center;background:rgba(255,255,255,.75);font:800 260px/1 var(--f-display);color:var(--ink)}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* phone / narrow: rail moves to bottom */
+@media (max-width:760px){
+  #app{grid-template-columns:minmax(0,1fr);grid-template-rows:52px minmax(0,1fr) 52px 60px;grid-template-areas:"top" "view" "nav" "rail"}
+  .rail{flex-direction:row;overflow-x:auto;padding:6px 8px;padding-bottom:calc(6px + env(safe-area-inset-bottom,0px));justify-content:flex-start}
+  .rail .sep{display:none}
+  .rb .tip{display:none}
+  .ttl,.scores{display:none}
+  .dots{max-width:46vw}
+  .nb .lbt{display:none}
 }
 </style>
 
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <defs>
-    <filter id="pen" x="-5%" y="-5%" width="110%" height="110%">
-      <feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="7"/>
-      <feDisplacementMap in="SourceGraphic" scale="2.2"/>
-    </filter>
-  </defs>
-</svg>
+</head>
+<body style="margin:0">
+<div id="app">
+  <header class="top">
+    <div class="logo">ala<b>qai</b></div>
+    <div class="ttl">Физика · 11 сынып · Электр энергиясын өндіру және қолдану</div>
+    <div class="scores" id="scores" aria-label="Топ ұпайлары"></div>
+    <button class="chip" id="tchip" hidden></button>
+    <div class="cnt" id="cnt">1 / 18</div>
+  </header>
 
-<canvas id="leaves" aria-hidden="true"></canvas>
+  <nav class="rail" aria-label="Құралдар">
+    <button class="rb" data-tool="overview" data-ic="grid"><span class="tip">Слайдтар</span></button>
+    <button class="rb" data-tool="journal" data-ic="journal"><span class="tip">Журнал және бағалау</span></button>
+    <button class="rb" data-tool="groups" data-ic="users"><span class="tip">Топтар және ұпай</span></button>
+    <button class="rb" data-tool="picker" data-ic="target"><span class="tip">Кездейсоқ оқушы</span></button>
+    <button class="rb" data-tool="timer" data-ic="timer"><span class="tip">Таймер</span></button>
+    <button class="rb" data-tool="light" data-ic="light"><span class="tip">Бағдаршам</span></button>
+    <button class="rb" data-tool="gloss" data-ic="book"><span class="tip">Глоссарий</span></button>
+    <button class="rb" id="penBtn" data-ic="pen"><span class="tip">Қалам (сурет салу)</span></button>
+    <button class="rb" data-tool="notes" data-ic="note"><span class="tip">Мұғалім жазбасы</span></button>
+    <div class="sep"></div>
+    <button class="rb" id="fsBtn" data-ic="max"><span class="tip">Толық экран (F)</span></button>
+  </nav>
 
-<header class="hero play">
-  <div class="wrap">
-    <svg class="branch ink" viewBox="0 0 460 170" aria-hidden="true">
-      <path d="M8 46 C90 58 170 34 260 64 C320 84 380 78 452 52"/>
-      <path class="thin" d="M120 50 C126 72 124 92 132 108"/>
-      <path class="thin" d="M300 74 C306 96 302 114 310 130"/>
-      <path class="thin" d="M210 50 C206 34 214 20 210 8"/>
-      <path class="leaf" transform="translate(132 126) rotate(8) scale(1.5)" d="M0 -20 L4 -9 L11 -13 L9 -3 L18 -5 L13 3 L16 7 L4 6 L5 14 L0 11 L-5 14 L-4 6 L-16 7 L-13 3 L-18 -5 L-9 -3 L-11 -13 L-4 -9 Z"/>
-      <path class="leaf" transform="translate(310 146) rotate(-12) scale(1.3)" d="M0 -20 L4 -9 L11 -13 L9 -3 L18 -5 L13 3 L16 7 L4 6 L5 14 L0 11 L-5 14 L-4 6 L-16 7 L-13 3 L-18 -5 L-9 -3 L-11 -13 L-4 -9 Z"/>
-      <path class="leaf" transform="translate(210 -4) rotate(180) scale(1.1)" d="M0 -20 L4 -9 L11 -13 L9 -3 L18 -5 L13 3 L16 7 L4 6 L5 14 L0 11 L-5 14 L-4 6 L-16 7 L-13 3 L-18 -5 L-9 -3 L-11 -13 L-4 -9 Z"/>
-      <path class="leaf" transform="translate(60 70) rotate(24) scale(1.15)" d="M0 -20 L4 -9 L11 -13 L9 -3 L18 -5 L13 3 L16 7 L4 6 L5 14 L0 11 L-5 14 L-4 6 L-16 7 L-13 3 L-18 -5 L-9 -3 L-11 -13 L-4 -9 Z"/>
-      <path class="leaf" transform="translate(408 90) rotate(-28) scale(1.25)" d="M0 -20 L4 -9 L11 -13 L9 -3 L18 -5 L13 3 L16 7 L4 6 L5 14 L0 11 L-5 14 L-4 6 L-16 7 L-13 3 L-18 -5 L-9 -3 L-11 -13 L-4 -9 Z"/>
-      <path class="thin" d="M60 54 L60 50 M408 70 L410 62"/>
-      <path class="gold" d="M360 24 l0 12 M354 30 l12 0"/>
-      <path class="gold" d="M90 16 l0 10 M85 21 l10 0"/>
-    </svg>
-    <p class="eyebrow">«Орион» мектебі</p>
-    <p class="hand">Құрметті әріптестер!</p>
-    <h1>Ұстаздар күні <em>құтты болсын!</em></h1>
-    <svg class="orn ink" viewBox="0 0 260 40" aria-hidden="true">
-      <path class="gold" d="M10 22 L96 22"/>
-      <path class="gold" d="M164 22 L250 22"/>
-      <path d="M130 30 C130 18 124 10 116 10 C108 10 104 17 108 22 C112 27 118 24 117 19"/>
-      <path d="M130 30 C130 18 136 10 144 10 C152 10 156 17 152 22 C148 27 142 24 143 19"/>
-      <path d="M124 34 L130 28 L136 34"/>
-    </svg>
+  <main class="view" id="view">
+    <div id="stage">
+
+<!-- 1 TITLE -->
+<section class="sl s-title" data-t="Тақырып" data-n="1 мин. Сәлемдесу үш тілде: Сәлеметсіздер ме! / Здравствуйте! / Good morning!
+Топқа бөлу: оқушылар «Көмір / Уголь / Coal» сияқты карточкалар алып, бір энергия көзін үш тілде тапқандар бір топқа жиналады. Нәтижені «Топтар» құралына енгізіңіз (немесе «Топқа кездейсоқ бөлу»).">
+  <div class="l">
+    <div class="eb"><span>Физика · 11 сынып</span><span class="tag">CLIL</span><span class="tag">STEM</span><span class="tag">Функционалдық сауаттылық</span></div>
+    <h1 class="h1">Қазақстанда және әлемде <span class="mk">электр энергиясын</span> өндіру және қолдану</h1>
+    <div class="tri">
+      <p><span class="lg ru">RU</span>Производство и использование электроэнергии в Казахстане и мире</p>
+      <p><span class="lg en">EN</span>Electricity generation and use in Kazakhstan and the world</p>
+    </div>
+    <div class="meta">
+      <span><b>Мұғалім:</b> Аззамкулов Фазлиддин · «Orion» жеке жалпы орта мектебі</span>
+      <span><b>Lesson Study</b> зерттеу сабағы · 14.10.2026</span>
+    </div>
   </div>
-</header>
+  <div class="r">
+    <div class="disc"><svg viewBox="0 0 24 24"><path d="M13.5 1 4 13.5h7L9.8 23 20 10.2h-7.2z"/></svg></div>
+    <div class="srcl"><i style="background:var(--g-coal);outline:1px solid #555"></i>Көмір<span>Coal</span></div>
+    <div class="srcl"><i style="background:var(--g-hydro)"></i>Су<span>Hydro</span></div>
+    <div class="srcl"><i style="background:var(--g-solar)"></i>Күн<span>Solar</span></div>
+    <div class="srcl"><i style="background:var(--g-wind)"></i>Жел<span>Wind</span></div>
+    <div class="srcl"><i style="background:var(--g-nuclear)"></i>Атом<span>Nuclear</span></div>
+  </div>
+</section>
 
-<main>
-  <section class="note wrap rv">
-    <div class="note-card">
-      <p>Бір ұжымда бірге еңбек етіп, бір мақсатқа қызмет ету — үлкен бақыт.</p>
-      <p>Сіздерге зор денсаулық, отбасыларыңызға береке, таусылмас шабыт тілейміз!</p>
+<!-- TEAMS -->
+<section class="sl" data-t="Топтар" data-n="1 мин. Топтар деңгей бойынша теңгерімді бөлінген (қыркүйектегі орташа балл): әр топта A, B, C деңгейлі оқушылар бар.
+1-топ «Жасыл энергия» — күн, жел, су. 2-топ «Дәстүрлі энергия» — көмір, газ, атом.
+Lesson Study фокус-оқушылары: A — Умарова Гулёра, B — Исаматова Гулида, C — Икрамжанов Шахзодбек.">
+  <div class="eb">Топтар · Группы · Teams</div>
+  <h2 class="h2">Бүгін екі топ <span class="mk">жарысады</span></h2>
+  <div class="teams" id="teamsSlide"></div>
+</section>
+
+<!-- 2 HOOK -->
+<section class="sl" data-t="Ойлан: 1 кВт·сағ" data-n="3 мин. Проблемалық сұрақ. Алдымен оқушылардан болжам сұраңыз, содан кейін карточкаларды бір-бірлеп ашыңыз.
+Есеп: 1 кВт·сағ = 3,6 МДж. Көмір ЖЭС-інің ПӘК ≈ 35 % болса, 10 МДж жылу керек. Екібастұз көмірінің жылу шығаруы ≈ 18–20 МДж/кг → ≈ 0,5 кг.
+Телефон: тәулігіне ≈ 15 Вт·сағ × 365 ≈ 5 кВт·сағ → ≈ 2,5 кг көмір.">
+  <div class="eb"><span class="lg kk">KK</span>Ойлан <span class="lg ru">RU</span>Подумай <span class="lg en">EN</span>Think</div>
+  <h2 class="h2">Розеткадағы бір кіловатт-сағат <span class="mk">қайдан</span> келеді?</h2>
+  <div class="eq">
+    <div class="one">1<small>кВт·сағ</small></div>
+    <div class="is">=</div>
+    <div class="rev">
+      <button class="rv hid" data-rv><b>≈ 0,5 кг көмір</b><span>көмір ЖЭС-інде жағылады</span></button>
+      <button class="rv hid" data-rv><b>≈ 1 кг CO₂</b><span>ауаға шығады</span></button>
+      <button class="rv hid" data-rv><b>Телефон: ≈ 2,5 кг/жыл</b><span>бір жыл зарядтау ≈ 5 кВт·сағ</span></button>
     </div>
-  </section>
+  </div>
+  <p class="src">Жуық есеп: көмір ЖЭС-інің ПӘК ≈ 35 %, Екібастұз көмірі. Карточканы ашу үшін басыңыз.</p>
+</section>
 
-  <section class="invite wrap" id="invite">
-    <svg class="dastarkhan ink rv" viewBox="0 0 360 230" aria-hidden="true">
-      <!-- tablecloth -->
-      <path d="M10 204 C120 196 240 210 350 200"/>
-      <path class="gold" d="M30 214 C130 208 230 220 330 212"/>
-      <!-- teapot -->
-      <path d="M70 198 C48 192 44 152 68 134 C90 118 140 118 160 134 C184 152 180 192 158 198 Z"/>
-      <path d="M86 126 C94 108 134 108 142 126"/>
-      <path d="M108 110 C108 100 120 100 120 110"/>
-      <path d="M164 150 C186 146 196 128 208 114"/>
-      <path d="M66 142 C38 142 36 178 62 182"/>
-      <path class="gold" d="M84 162 C94 150 104 174 114 162 C124 150 134 174 144 162 C150 156 156 160 160 164"/>
-      <!-- kese cups -->
-      <path d="M218 198 C212 182 212 170 214 162 L258 162 C260 170 260 182 254 198 Z"/>
-      <path class="gold" d="M216 174 L256 174"/>
-      <path d="M280 198 C274 182 274 170 276 162 L320 162 C322 170 322 182 316 198 Z"/>
-      <path class="gold" d="M278 174 L318 174"/>
-      <!-- steam -->
-      <path class="thin" d="M236 150 C228 138 244 128 236 112"/>
-      <path class="thin" d="M298 150 C290 138 306 128 298 112"/>
-      <path class="thin" d="M210 104 C204 94 214 86 208 76"/>
-      <!-- baursak -->
-      <path d="M150 200 C150 190 164 190 164 200"/>
-      <path d="M166 200 C166 192 178 192 178 200"/>
-      <path d="M158 192 C158 184 170 184 170 192"/>
-    </svg>
-
-    <div class="head rv">
-      <p class="hand">Сізді шақырамыз!</p>
-      <p>Мерекелік дастарханымызға келіп, қуанышымызды бірге бөлісіңіз.</p>
+<!-- 3 GOALS -->
+<section class="sl" data-t="Сабақ мақсаттары" data-n="1 мин. Мақсаттарды оқушылармен бірге оқыңыз. Сабақ соңында осы слайдқа қайта оралып, «Мақсатқа жеттік пе?» деп сұраңыз.
+Lesson Study: зерттеу сұрағы бақылаушылар үшін көрсетілген.">
+  <div class="eb">Мақсат · Цель · Goal</div>
+  <h2 class="h2">Бүгін біз энергия көздерін <span class="mk">бағалаймыз</span></h2>
+  <div class="cols">
+    <div class="box ink">
+      <span class="k">Оқу мақсаты · 11.4.3.7</span>
+      <h4>Энергия көздерінің артықшылығы мен кемшілігін бағалау</h4>
+      <span class="k" style="margin-top:10px">Тілдік мақсат</span>
+      <p style="font-size:24px">Терминдерді үш тілде қолданады. Өз пікірін ағылшын тілінде 1–2 сөйлеммен дәлелдейді.</p>
     </div>
+    <div class="box">
+      <span class="k">Сабақ мақсаты</span>
+      <dl class="lvl" style="margin:0;font-size:24px">
+        <dt>Барлығы</dt><dd>энергия көздерін жаңартылатын және жаңартылмайтын деп жіктейді</dd>
+        <dt>Көпшілігі</dt><dd>деректер бойынша артықшылығы мен кемшілігін бағалайды</dd>
+        <dt>Кейбіреуі</dt><dd>Қазақстан үшін тиімді энергия теңгерімін есептеп дәлелдейді</dd>
+      </dl>
+    </div>
+  </div>
+  <div class="rq"><b>LESSON STUDY · ЗЕРТТЕУ СҰРАҒЫ</b>Деректерге негізделген рөлдік ойын оқушылардың энергия көздерін бағалау дағдысын қалай дамытады?</div>
+</section>
 
-    <article class="ticket rv" aria-label="Шақыру">
-      <div class="top">
-        <div class="row">
-          <svg class="ink" viewBox="0 0 36 36" aria-hidden="true"><path d="M5 9 L31 9 L31 31 L5 31 Z"/><path d="M5 15 L31 15"/><path d="M11 5 L11 12 M25 5 L25 12"/><path class="gold" d="M12 22 l3 3 l7 -7"/></svg>
-          <div><p class="k">Күні</p><p class="v">5 қазан, дүйсенбі</p></div>
-        </div>
-        <div class="row">
-          <svg class="ink" viewBox="0 0 36 36" aria-hidden="true"><path d="M18 4 C26 4 32 10 32 18 C32 26 26 32 18 32 C10 32 4 26 4 18 C4 10 10 4 18 4"/><path class="gold" d="M18 10 L18 18 L24 22"/></svg>
-          <div><p class="k">Сағаты</p><p class="v">12:00</p></div>
-        </div>
-        <div class="row">
-          <svg class="ink" viewBox="0 0 36 36" aria-hidden="true"><path d="M18 33 C12 25 7 19 7 13 C7 7 12 3 18 3 C24 3 29 7 29 13 C29 19 24 25 18 33"/><path class="gold" d="M18 9 C21 9 23 11 23 13 C23 16 21 17 18 17 C15 17 13 16 13 13 C13 11 15 9 18 9"/></svg>
-          <div><p class="k">Орны</p><p class="v">Мектептің А корпусы</p></div>
-        </div>
+<!-- 4 CRITERIA -->
+<section class="sl" data-t="Бағалау критерийі" data-n="1 мин. Дескрипторлар журналда Д1–Д4 болып белгіленеді. Сабақ бойы «Журнал» құралында белгілеп отырыңыз.">
+  <div class="eb">Бағалау · Оценивание · Assessment</div>
+  <h2 class="h2">Энергия көздерінің артықшылықтары мен кемшіліктерін <span class="mk">бағалайды</span></h2>
+  <div class="desc">
+    <div><b>Д1</b><span>Энергия көздерін жаңартылатын және жаңартылмайтын деп жіктейді</span><span class="p">1 балл</span></div>
+    <div><b>Д2</b><span>Деректер бойынша екі артықшылық пен екі кемшілікті атайды</span><span class="p">2 балл</span></div>
+    <div><b>Д3</b><span>Есептеу арқылы энергия көздерін салыстырады</span><span class="p">2 балл</span></div>
+    <div><b>Д4</b><span>Қазақстан үшін тиімді энергия теңгерімін дәлелдейді</span><span class="p">1 балл</span></div>
+  </div>
+  <p class="src">Барлығы: 6 балл. Өзара бағалау: «Екі жұлдыз, бір тілек».</p>
+</section>
+
+<!-- 5 GLOSSARY -->
+<section class="sl" data-t="Глоссарий" data-n="1 мин. Ағылшын сөзін басса, дауыстап оқиды. Глоссарий сабақ бойы сол жақтағы «Глоссарий» құралында ашық тұрады.">
+  <div class="eb"><span class="tag">CLIL</span>Үш тілдегі терминдер</div>
+  <table class="gtab">
+    <thead><tr><th>ҚАЗАҚША</th><th>РУССКИЙ</th><th>ENGLISH</th></tr></thead>
+    <tbody id="gtb"></tbody>
+  </table>
+</section>
+
+<!-- 6 BILL CALC -->
+<section class="sl" data-t="Квитанция калькуляторы" data-n="4 мин. Функционалдық сауаттылық. Оқушылар үйден әкелген электр квитанциясындағы айлық кВт·сағ мәнін енгізеді.
+Тарифті өз квитанцияңыздағы нақты мәнге ауыстырыңыз (25 ₸ — мысал).
+Сұрақ: «Отбасың тұтынуды 20 %-ға азайтса, жылына қанша көмір үнемделеді?» → «−20 %» батырмасы.">
+  <div class="eb"><span class="tag">Функционалдық сауаттылық</span>Сенің үйің</div>
+  <h2 class="h2">Квитанцияң не <span class="mk">айтады?</span></h2>
+  <div class="calc">
+    <div style="display:flex;flex-direction:column;gap:26px">
+      <div class="inp">
+        <label for="kwh">Айлық тұтыну</label>
+        <div class="w"><input type="number" id="kwh" value="180" min="0" max="2000"><span class="u">кВт·сағ</span></div>
+        <input type="range" id="kwhR" min="20" max="600" value="180" aria-label="Айлық тұтыну">
       </div>
-      <div class="tear" aria-hidden="true"></div>
-      <div class="bottom">
-        <div class="count">
-          <p class="k" id="ck">Басталуына қалды</p>
-          <p class="v" id="cv">—</p>
-        </div>
-        <button class="btn" id="go" type="button">Келемін!</button>
+      <div class="inp">
+        <label for="tar">Тариф (квитанциядан)</label>
+        <div class="w"><input type="number" id="tar" value="25" min="0" step="0.1"><span class="u">₸ / кВт·сағ</span></div>
       </div>
-    </article>
-
-    <div class="sign rv">
-      <p class="hand">Ізгі ниетпен, 1-топ мүшелері</p>
-      <small>Ұйымдастырушылар</small>
+      <div class="row" style="gap:12px">
+        <button class="btn" id="save20">−20 % үнемдеу</button>
+        <button class="btn" id="saveReset">Қалпына келтіру</button>
+      </div>
     </div>
-  </section>
-</main>
-<footer>«Орион» жеке жалпы орта мектебі · 2026</footer>
+    <div style="display:flex;flex-direction:column;gap:20px;min-width:0">
+      <div class="tiles">
+        <div class="tile"><span class="t">Айлық төлем</span><span class="v" id="o-pay">0</span></div>
+        <div class="tile hl"><span class="t">Жылына көмір</span><span class="v" id="o-coal">0</span></div>
+        <div class="tile dk"><span class="t">Жылына CO₂</span><span class="v" id="o-co2">0</span></div>
+        <div class="tile"><span class="t">CO₂-ні сіңіру үшін ағаш</span><span class="v" id="o-tree">0</span></div>
+      </div>
+      <ol class="tasks">
+        <li>Квитанцияңдағы мәнді енгіз.</li>
+        <li>Тұтынуды 20 %-ға азайтсаң, жылына қанша көмір үнемделеді?</li>
+        <li>Үйдегі қай құрылғы ең көп тұтынады? Неге?</li>
+      </ol>
+    </div>
+  </div>
+  <p class="src" style="margin-top:0">Жуық есеп: барлық энергия көмір ЖЭС-інен келеді деп алынды; 1 ағаш жылына ≈ 22 кг CO₂ сіңіреді.</p>
+</section>
+
+<!-- 7 SORT GAME -->
+<section class="sl" data-t="Жіктеу ойыны" data-n="3 мин. Д1. Карточканы басып, содан кейін себетті басыңыз (немесе сүйреп апарыңыз). Оқушыларды тақтаға шақыруға болады — «Кездейсоқ оқушы» құралы.
+Талқылау: неге уран жаңартылмайтын? Неге биомасса жаңартылатын?">
+  <div class="eb">Ойын · Игра · Game</div>
+  <h2 class="h2">Жаңартылатын ба, <span class="mk">жаңартылмайтын</span> ба?</h2>
+  <div class="pool" id="sortPool"></div>
+  <div class="bins">
+    <div class="bin" data-bin="r"><h4>Жаңартылатын<small>Возобновляемые · Renewable</small></h4><div class="pool"></div></div>
+    <div class="bin" data-bin="n"><h4>Жаңартылмайтын<small>Невозобновляемые · Non-renewable</small></h4><div class="pool"></div></div>
+  </div>
+  <div class="row" style="gap:14px">
+    <button class="btn dark" id="sortCheck">Тексеру</button>
+    <button class="btn" id="sortReset">Қайта бастау</button>
+    <span id="sortRes" style="font:700 26px var(--f-mono)"></span>
+  </div>
+</section>
+
+<!-- 8 WORLD -->
+<section class="sl" data-t="Әлем: 2025" data-n="2 мин. Негізгі дерек: 2025 жылы әлемде жаңартылатын көздер (33,8 %) алғаш рет көмірден (33,0 %) озды.
+Сұрақ: «Неге әлем жаңартылатын энергияға көшіп жатыр?» RU/EN: Renewables overtook coal for the first time.">
+  <div class="eb"><span class="lg en">EN</span>Renewables overtook coal for the first time</div>
+  <h2 class="h2">2025: әлемде жаңартылатын энергия алғаш рет <span class="mk">көмірден озды</span></h2>
+  <div class="bars" style="margin-top:14px">
+    <div class="bar"><span class="n">Жаңартылатын<small>су, жел, күн және т.б.</small></span><div class="tr"><div class="f" style="width:100%;background:var(--g-wind)"></div></div><span class="p">33,8 %</span></div>
+    <div class="bar"><span class="n">Көмір<small>Coal · Уголь</small></span><div class="tr"><div class="f" style="width:97.6%;background:var(--g-coal)"></div></div><span class="p">33,0 %</span></div>
+    <div class="bar"><span class="n">Газ және басқа<small>қазба отын</small></span><div class="tr"><div class="f" style="width:71.6%;background:#9AA3B2"></div></div><span class="p">≈ 24 %</span></div>
+    <div class="bar"><span class="n">Атом<small>Nuclear · Атом</small></span><div class="tr"><div class="f" style="width:26.6%;background:var(--g-nuclear)"></div></div><span class="p">≈ 9 %</span></div>
+  </div>
+  <p class="src">Дереккөз: Ember, Global Electricity Review 2026 (әлемдік электр өндірісінің үлесі, 2025). «Газ және басқа» — қалған үлес.</p>
+</section>
+
+<!-- 9 KAZAKHSTAN -->
+<section class="sl" data-t="Қазақстан" data-n="3 мин. Салыстыру: әлемде жаңартылатын көздер 33,8 %, Қазақстанда 7 %. Неге айырмашылық бар? (көмір қоры, арзан баға, ескі ЖЭС-тер)
+Шардара СЭС — біздің Түркістан облысында.
+2035 жоспары — бұл ҚУАТ құрылымы (МВт), өндіріс үлесі емес.">
+  <div class="eb">Қазақстан · Казахстан · Kazakhstan</div>
+  <h2 class="h2">Қазақстан әзірге <span class="mk">көмірмен</span> жарық</h2>
+  <div class="kz">
+    <div class="facts">
+      <div class="fact"><b>≈ 2/3</b><span>электр энергиясы көмірден өндіріледі</span></div>
+      <div class="fact"><b>7 %</b><span>жаңартылатын көздер үлесі, 2025 (8,6 млрд кВт·сағ)</span></div>
+      <div class="fact"><b>15 %</b><span>ЖЭК бойынша 2030 жылғы мақсат</span></div>
+      <div class="fact"><b>1-орын</b><span>әлемде уран өндіру бойынша. 2024 жылы АЭС бойынша референдум өтті</span></div>
+    </div>
+    <div class="chart">
+      <span class="k">ЖЭК үлесі, %</span>
+      <div class="colsch">
+        <div class="cc"><b>4,5</b><div class="c" style="height:24%"></div></div>
+        <div class="cc"><b>5,9</b><div class="c" style="height:31.5%"></div></div>
+        <div class="cc"><b>6,4</b><div class="c" style="height:34.3%"></div></div>
+        <div class="cc"><b>7,0</b><div class="c" style="height:37.3%"></div></div>
+        <div class="cc"><b>15</b><div class="c goal" style="height:80%"></div></div>
+      </div>
+      <div class="xl"><span>2022</span><span>2023</span><span>2024</span><span>2025</span><span>2030 мақсат</span></div>
+      <span class="k" style="margin-top:14px">Қуат құрылымы жоспары, 2035</span>
+      <div class="stack">
+        <div style="width:34.3%;background:var(--g-coal)">34 %</div>
+        <div style="width:25.8%;background:#9AA3B2">26 %</div>
+        <div style="width:24.4%;background:var(--g-wind)">24 %</div>
+        <div style="width:10.8%;background:var(--g-hydro)">11</div>
+        <div style="width:4.7%;background:var(--g-nuclear)"></div>
+      </div>
+      <div class="legend"><span><i style="background:var(--g-coal)"></i>Көмір</span><span><i style="background:#9AA3B2"></i>Газ</span><span><i style="background:var(--g-wind)"></i>ЖЭК</span><span><i style="background:var(--g-hydro)"></i>СЭС</span><span><i style="background:var(--g-nuclear)"></i>АЭС 4,7 %</span></div>
+    </div>
+  </div>
+  <p class="src" style="margin-top:0">Дереккөз: ҚР Энергетика министрлігі (2025 қорытындысы), KPMG (2025), ҚР Энергетика министрлігінің 2035 жылға дейінгі жоспары. ЖЭК — жаңартылатын энергия көздері.</p>
+</section>
+
+<!-- MAP -->
+<section class="sl" data-t="Қазақстан картасы" data-n="3 мин. Өңірді басқанда оң жақта оның электр станциялары, негізгі энергия көзі және энергия балансы шығады.
+Алдымен Түркістан облысын көрсетіңіз (Шардара СЭС), содан кейін Павлодарды (Екібастұз — елдегі ең ірі станциялар) салыстырыңыз.
+Сұрақ: «Неге солтүстікте көмір, оңтүстікте су мен күн?» Деректер жуық; белгісіз жерде «нақты дерек жоқ» деп көрсетілген.">
+  <div class="eb">Карта · Карта · Map</div>
+  <h2 class="h2" style="font-size:50px">Электр станциялары: <span class="mk">өңір бойынша</span></h2>
+  <div class="mapw">
+    <div style="display:flex;flex-direction:column;gap:10px;min-width:0;min-height:0">
+      <svg class="mapsvg" id="kzmap" viewBox="-10 -10 1010 570" role="img" aria-label="Қазақстан облыстарының картасы"></svg>
+      <div class="mleg" id="mleg"></div>
+    </div>
+    <div class="rinfo" id="rinfo"></div>
+  </div>
+</section>
+
+<!-- NPP -->
+<section class="sl" data-t="АЭС: Үлкен" data-n="3 мин. Қазақстандағы алғашқы АЭС. Сұрақ: «Неге халық бұрын АЭС-тен қорықты?» (Семей полигоны). «Неге көзқарас өзгерді?»
+Референдум: 6 қазан 2024, «иә» — ≈ 71 %, қатысқандар — ≈ 64 %.
+2025 жылы «Росатом» алғашқы АЭС салатын халықаралық консорциумның көшбасшысы болып таңдалды; Қытайдың CNNC компаниясы — келесі станцияларға.
+Реактор: ВВЭР-1200, III+ буын. Іске қосу мерзімі — жоспар бойынша 2030-жылдардың ортасы.">
+  <div class="eb">Атом · АЭС · Nuclear power plant</div>
+  <h2 class="h2">Қазақстанның алғашқы <span class="mk">АЭС-і</span>: Үлкен ауылы</h2>
+  <div class="cols" style="grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);gap:24px">
+    <div class="box ink"><span class="k">Референдум · 6 қазан 2024</span><div style="font:800 96px/1 var(--f-mono);letter-spacing:-.03em;color:var(--lime)">71 %</div><p style="font-size:23px">дауыс берушілер АЭС салуды қолдады. Қатысқандар ≈ 64 %.</p><p style="font-size:20px;color:#AEB6C3">Орны: Алматы облысы, Балқаш көлінің жағасы, Үлкен ауылы.</p></div>
+    <div class="box"><span class="k">Кім салады?</span><p style="font-size:24px"><b>«Росатом»</b> (Ресей) — алғашқы АЭС салатын халықаралық консорциумның көшбасшысы (2025).</p><p style="font-size:24px"><b>CNNC</b> (Қытай) — екінші және үшінші АЭС жобалары.</p><p style="font-size:20px;color:var(--muted)">Реактор: ВВЭР-1200, 2 блок, ≈ 2,4 ГВт. Іске қосу — жоспар бойынша 2030-жылдардың ортасы.</p></div>
+    <div class="box"><span class="k">Қаншалықты қауіпсіз?</span><p style="font-size:22px">III+ буын реакторы: пассивті қауіпсіздік жүйелері (электрсіз де салқындатады), балқыма ұстағыш, екі қабатты қорғаныс қабығы.</p><p style="font-size:22px">Мұндай реакторлар Беларусь, Ресей және басқа елдерде жұмыс істейді.</p></div>
+  </div>
+  <div class="cols" style="gap:24px">
+    <div class="rq" style="border-color:var(--pink)"><b style="color:var(--pink)">НЕГЕ ХАЛЫҚ ҚОРЫҚТЫ?</b>Семей ядролық полигонында 1949–1989 жылдары 456 ядролық сынақ жасалды. 1991 жылы 29 тамызда полигон жабылды. Халық радиацияның зардабын көрді.</div>
+    <div class="rq" style="border-color:var(--ok)"><b style="color:var(--ok)">НЕГЕ КӨЗҚАРАС ӨЗГЕРДІ?</b>Электр тапшылығы өсті, ескі ЖЭС-тер тозды, көмір ауаны ластайды. АЭС CO₂ шығармайды, тәулік бойы тұрақты жұмыс істейді. Ақтаудағы БН-350 реакторы 1973–1999 жылдары қауіпсіз жұмыс істеген.</div>
+  </div>
+</section>
+
+<!-- 10 EXPERTS -->
+<section class="sl" data-t="Сарапшылар тобы" data-n="7 мин. «Ажурлы ара» (Jigsaw). 1-топ: күн, жел, су карточкалары. 2-топ: көмір, атом карточкалары. Мәтін қазақша, деректер кестесі ағылшынша (CLIL).
+Топ ішінде жұптарға бөліп беріңіз: әр жұп бір көзді зерттейді, содан кейін өз тобына түсіндіреді.
+Тапсырма: энергия түрлену тізбегі + 2 артықшылық + 2 кемшілік.
+Lesson Study: фокус-оқушылар A, B, C қалай жұмыс істейтінін бақылаушылар жазады. Таймерді 8 минутқа қосыңыз.">
+  <div class="eb">Сарапшылар тобы · Jigsaw</div>
+  <h2 class="h2">Әр топ өз энергия көздерінің <span class="mk">сарапшысы</span></h2>
+  <div class="gt" id="gtiles"></div>
+  <div class="steps">
+    <div class="stp"><b>1</b>Карточканы оқы: мәтін қазақша, деректер ағылшынша</div>
+    <div class="stp"><b>2</b>Энергия түрлену тізбегін жаз</div>
+    <div class="stp"><b>3</b>2 артықшылық, 2 кемшілік — деректермен</div>
+    <div class="stp"><b>4</b>Тобыңа түсіндір, дебатқа дайындал</div>
+  </div>
+  <div class="row" style="gap:14px"><button class="btn dark" data-timer="420">Таймер: 7 минут</button><span class="sub" style="font-size:20px">Д2</span></div>
+</section>
+
+<!-- 11 STEM PROBLEM -->
+<section class="sl" data-opt="1" data-t="STEM есеп" data-n="5 мин (қысқартуға болады). Деңгейлік тапсырма: A — бәріне, B — көпшілігіне, C — кейбіреуіне. Д3.
+Жауаптар үйлер саны мен тұтынуды өзгерткенде автоматты түрде қайта есептеледі.
+Мәндер: көмір 0,5 кг/кВт·сағ; 400 Вт панель жылына ≈ 600 кВт·сағ (Оңтүстік Қазақстан); 3 МВт жел турбинасы, қуат коэффициенті 35 % → жылына ≈ 9,2 млн кВт·сағ.">
+  <div class="eb"><span class="tag">STEM</span>Есеп · Задача · Problem</div>
+  <h2 class="h2">Біздің қалаға қанша <span class="mk">станция</span> керек?</h2>
+  <div class="row" style="gap:28px;font-size:24px">
+    <label for="hh">Үй саны</label><input id="hh" type="number" value="20000" style="width:200px;height:60px;border:2px solid var(--ink);border-radius:12px;font:800 30px var(--f-mono);padding-inline:12px">
+    <label for="ehh">Бір үй, айына</label><input id="ehh" type="number" value="150" style="width:150px;height:60px;border:2px solid var(--ink);border-radius:12px;font:800 30px var(--f-mono);padding-inline:12px"><span class="num" style="color:var(--muted)">кВт·сағ</span>
+  </div>
+  <div class="lv3">
+    <div class="lv a"><span class="badge">A</span><b>Қала бір жылда қанша энергия тұтынады?</b><span class="formula">E = N · e · 12</span><div class="ans hid" id="ansA" data-ans></div></div>
+    <div class="lv b"><span class="badge">B</span><b>Осы энергияға не керек?</b><span>көмір: 0,5 кг/кВт·сағ<br>400 Вт панель: 600 кВт·сағ/жыл<br>3 МВт жел турбинасы: 9,2 млн кВт·сағ/жыл</span><div class="ans hid" id="ansB" data-ans></div></div>
+    <div class="lv c"><span class="badge">C</span><b>Көмір мен желдің жылдық CO₂ шығарындысын салыстыр.</b><span>көмір 820 г/кВт·сағ, жел 11 г/кВт·сағ.<br>Қорытынды жаса.</span><div class="ans hid" id="ansC" data-ans></div></div>
+  </div>
+  <p class="src" style="margin-top:0">Жауапты ашу үшін сұр аймақты басыңыз.</p>
+</section>
+
+<!-- 12 EXPERIMENT -->
+<section class="sl" data-opt="1" data-t="Эксперимент: күн батареясы" data-n="3 мин (қосымша). Құрал: шағын күн панелі + мультиметр (немесе вольтметр мен амперметр), шам немесе терезе жарығы.
+Үш өлшеу: тік жарық, 45° бұрыш, көлеңке. P = U·I. Қорытынды: күн энергиясы ауа райы мен бұрышқа тәуелді — бұл оның басты кемшілігі.
+Панель болмаса — мысал мәндерімен түсіндіріңіз.">
+  <div class="eb"><span class="tag">STEM</span>Эксперимент · Experiment</div>
+  <h2 class="h2">Күн батареясының <span class="mk">қуатын</span> өлшейміз</h2>
+  <div class="cols" style="grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)">
+    <table class="mt">
+      <thead><tr><th>ЖАҒДАЙ</th><th>U, В</th><th>I, мА</th><th>P = U·I</th></tr></thead>
+      <tbody id="expBody"></tbody>
+    </table>
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div class="inp"><label for="load">Сынып шамдарының қуаты</label><div class="w"><input type="number" id="load" value="216"><span class="u">Вт</span></div><span class="sub" style="font-size:19px">мысалы: 12 шам × 18 Вт</span></div>
+      <div class="tile hl"><span class="t">Сыныпқа қанша панель керек? (тік жарықта)</span><span class="v" id="expN">0</span></div>
+      <p style="margin:0;font-size:22px"><b>Не байқадың?</b> Бұрыш пен көлеңке қуатты қалай өзгертті?</p>
+    </div>
+  </div>
+</section>
+
+<!-- 13 COUNCIL -->
+<section class="sl" data-t="Энергетикалық кеңес" data-n="5 мин. Дебат: 1-топ «Жасыл энергия» мен 2-топ «Дәстүрлі энергия». Әр топқа 2 минут: топ батырмасын бассаңыз, таймер 2 минутқа қосылады. Әр топтан кемінде 3 оқушы сөйлейді (A, B, C деңгейінен).
+Талап: дерек + сан, кемшілікті мойындау, ағылшынша бір сөйлем.
+Басқа топтар «Екі жұлдыз, бір тілек» береді. Жақсы дәлел үшін топқа ұпай қосыңыз («Топтар» құралы немесе жоғарғы ұпай). Д2, Д4.">
+  <div class="eb">Рөлдік ойын · Ролевая игра · Role play</div>
+  <h2 class="h2">Дебат: <span class="mk">жасыл</span> энергия ма, дәстүрлі ме?</h2>
+  <div class="cols">
+    <div class="box">
+      <span class="k">Әр топқа 2 минут</span>
+      <p><b>1.</b> Біздің көз неге тиімді? Дерек пен санмен дәлелде.</p>
+      <p><b>2.</b> Кемшілігін мойында және шешім ұсын.</p>
+      <p><b>3.</b> Ағылшын тілінде бір сөйлем айт.</p>
+      <p class="sub" style="font-size:21px">Тыңдаушылар: «Екі жұлдыз, бір тілек»</p>
+    </div>
+    <div class="frames">
+      <span class="k">Sentence frames</span>
+      <div class="frame">Our source is the best for Kazakhstan because…</div>
+      <div class="frame">The main advantage is… The main disadvantage is…</div>
+      <div class="frame">I agree / disagree with this group because…</div>
+    </div>
+  </div>
+  <div class="order" id="council"></div>
+</section>
+
+<!-- 14 MIX BUILDER -->
+<section class="sl" data-t="Конструктор 2035" data-n="4 мин. Бүкіл сынып бірге шешеді: Түркістан облысының 2035 жылғы энергия теңгерімі. Қосынды 100 % болуы керек.
+Шарттар: CO₂ ≤ 400 г/кВт·сағ, сенімділік ≥ 70 %, баға ≤ 100 $/МВт·сағ.
+«Тек жасыл» алдын ала орнатуын көрсетіңіз: сенімділік неге төмен? (түн, желсіз күн → аккумулятор немесе тұрақты станция керек). Д4.
+Мәндер жуық: IPCC (2014), Lazard (2024).">
+  <div class="eb">Конструктор · Builder</div>
+  <h2 class="h2">Өңіріміздің 2035 жылғы <span class="mk">энергия теңгерімі</span></h2>
+  <p class="sub" style="font-size:21px;margin-top:-10px">Бастапқы күй — <b>қазіргі</b> (2025) теңгерім: көмір ≈ 67 %. Сендердің міндеттерің — оны 2035 жылға қарай өзгерту. Үкімет жоспары: көмір қуаты ≈ 34 %.</p>
+  <div class="mix">
+    <div class="sliders" id="sliders"></div>
+    <div class="res">
+      <div class="stack" id="mixStack"></div>
+      <div class="rs"><span class="t">Орташа CO₂</span><span class="pill" id="pCo2"></span><span class="v" id="vCo2"></span></div>
+      <div class="rs"><span class="t">Сенімділік (түнде, желсіз күні)</span><span class="pill" id="pRel"></span><span class="v" id="vRel"></span></div>
+      <div class="rs"><span class="t">Орташа баға</span><span class="pill" id="pCost"></span><span class="v" id="vCost"></span></div>
+      <div class="total">Барлығы: <b id="mixTotal">100 %</b><button class="btn" id="mixNorm" style="font-size:17px;padding:9px 14px">100 %-ға келтіру</button></div>
+    </div>
+  </div>
+  <div class="presets">
+    <button class="btn" data-preset="now">Қазір, 2025 (көмір ≈ 67 %)</button>
+    <button class="btn" data-preset="plan">Үкімет жоспары, 2035</button>
+    <button class="btn" data-preset="green">Тек жасыл</button>
+    <button class="btn" data-preset="zero">Нөлден бастау</button>
+  </div>
+</section>
+
+<!-- RACE -->
+<section class="sl" style="padding-top:44px;padding-bottom:40px;gap:16px" data-t="Гонка: ток үйге" data-n="4 мин. Екі топ интерактивті экранда бір мезгілде ойнайды: сол жақ — 1-топ, оң жақ — 2-топ. Әр топтан бір оқушы шығып, кезекпен жауап береді.
+Дұрыс жауап — ток бір қадам үйге жылжиды (20 қадам). Қате жауап — ток жылжымайды, бірден келесі сұрақ шығады (айыппұл жоқ).
+Бірінші жеткен топқа +3 ұпай. «Бастау» → 3-2-1.">
+  <div class="eb">Гонка · Гонка · Race</div>
+  <div class="race" id="race"></div>
+</section>
+
+<!-- 16 VOTE -->
+<section class="sl" data-opt="1" data-t="Төрт бұрыш: дауыс беру" data-n="2 мин (қосымша, сергіту сәті). Оқушылар таңдаған энергия көзінің бұрышына барып тұрады. Санын енгізіңіз.
+Әр бұрыштан бір оқушы ағылшынша немесе орысша бір сөйлеммен түсіндіреді.">
+  <div class="eb">Дауыс беру · Голосование · Vote</div>
+  <h2 class="h2">Қазақстанның болашағы <span class="mk">қай көзде?</span></h2>
+  <div style="display:flex;flex-direction:column;gap:16px" id="vote"></div>
+  <div class="row"><button class="btn" id="voteReset">Нөлдеу</button></div>
+</section>
+
+<!-- EXTRA -->
+<section class="sl xtra" data-opt="1" data-t="Қосымша тапсырмалар" data-n="Уақыт қалса ғана. Тапсырманы басса, жауабы ашылады. Топтарға беріп, дұрыс жауап үшін «Топтар» құралынан ұпай қосыңыз.">
+  <div class="eb">Қосымша · Дополнительно · Extra</div>
+  <h2 class="h2">Уақыт қалды ма? <span class="mk">Қосымша тапсырмалар</span></h2>
+  <div class="lv3" style="grid-template-columns:repeat(3,minmax(0,1fr));gap:18px">
+    <div class="lv"><span class="badge">1</span><b>Шамды ауыстыр</b><span>Үйде 10 шам, әрқайсысы 60 Вт, күніне 5 сағат жанады. LED шам 9 Вт. Айына (30 күн) қанша кВт·сағ үнемделеді?</span><div class="ans hid" data-ans>(60 − 9) · 10 · 5 · 30 = 76 500 Вт·сағ ≈ 76,5 кВт·сағ</div></div>
+    <div class="lv"><span class="badge">2</span><b>Трансформатор</b><span>Станция кернеуі 10 кВ, ЭБЖ кернеуі 500 кВ. Трансформация коэффициенті қанша? Кернеу неге жоғарылатылады?</span><div class="ans hid" data-ans>k = 10 / 500 = 0,02 (жоғарылатқыш, 50 есе). Ток азаяды → сымдағы шығын азаяды (Q = I²Rt).</div></div>
+    <div class="lv"><span class="badge">3</span><b>Translate · Перевод</b><span>Аудар: «Wind and solar are renewable, but they depend on the weather.»</span><div class="ans hid" data-ans>Жел мен күн — жаңартылатын көздер, бірақ олар ауа райына тәуелді. / Ветер и солнце — возобновляемые, но зависят от погоды.</div></div>
+    <div class="lv"><span class="badge">4</span><b>Күн панелі</b><span>Панель қуаты 400 Вт, күніне 6 сағат күн. Бір айда (30 күн) қанша кВт·сағ өндіреді?</span><div class="ans hid" data-ans>400 · 6 · 30 = 72 000 Вт·сағ = 72 кВт·сағ</div></div>
+    <div class="lv"><span class="badge">5</span><b>Ойлан</b><span>Неге Павлодарда көмір станциялары көп, ал Түркістанда — су және күн станциялары?</span><div class="ans hid" data-ans>Павлодар — Екібастұз көмір бассейніне жақын. Түркістан — күн шуағы көп, Сырдария өзені бар (Шардара СЭС).</div></div>
+    <div class="lv"><span class="badge">6</span><b>АЭС</b><span>Атом станциясының 2 артықшылығы мен 2 кемшілігін ата.</span><div class="ans hid" data-ans>+ CO₂ шығармайды, тәулік бойы тұрақты. − Салу қымбат, радиоактивті қалдық.</div></div>
+  </div>
+</section>
+
+<!-- 17 REFLECTION -->
+<section class="sl" data-t="Рефлексия" data-n="3 мин. Әр оқушы тақтаға шығып, бір батырманы басады: Түсіндім / Сұрағым бар / Түсінбедім. Сан мен пайыз бірден шығады. Қате басылса — «Соңғысын өшіру».
+Содан кейін стикерге үш тілде үш сөйлем жазады.
+Сабақ мақсаттарына оралыңыз (3-слайд). Lesson Study: фокус-оқушылардан сабақтан кейін қысқа сұхбат алыңыз.">
+  <div class="eb">Рефлексия · Reflection</div>
+  <h2 class="h2" style="font-size:50px">Рефлексия: тақтаны басып, <span class="mk">белгіле</span></h2>
+  <div class="tix">
+    <div class="tk" style="background:var(--soft)"><span class="lg kk" style="align-self:flex-start">KK</span><span class="s">Мен бүгін… үйрендім</span></div>
+    <div class="tk" style="background:var(--lime)"><span class="lg ru" style="align-self:flex-start">RU</span><span class="s">Мне было трудно…</span></div>
+    <div class="tk" style="background:var(--ink);color:#fff"><span class="lg en" style="align-self:flex-start">EN</span><span class="s">I want to know more about…</span></div>
+  </div>
+  <div class="rcnt" id="rcnt"></div>
+  <div class="hw">
+    <div class="box"><span class="k">Үй тапсырмасы</span><p>Отбасыңның бір айлық электр тұтынуын есепте. Оны 10 %-ға азайтудың үш жолын ұсын.</p></div>
+    <div class="box"><span class="k">Шығармашылық (қосымша)</span><p>Ауылымыз үшін энергия жобасын ұсын: қай көз, қанша қуат, неге?</p></div>
+  </div>
+</section>
+
+<!-- 18 END -->
+<section class="sl s-end" data-t="Қорытынды" data-n="Сабақты қорытындылау. Топ ұпайларын жариялаңыз. Рахмет!">
+  <div class="eb">Қорытынды</div>
+  <p class="q">Ең таза энергия — <span class="mk">үнемделген</span> энергия.</p>
+  <div class="tri">
+    <p><span class="lg ru">RU</span>Самая чистая энергия — сэкономленная энергия.</p>
+    <p><span class="lg en">EN</span>The cleanest energy is the energy we save.</p>
+  </div>
+  <div class="row" style="gap:18px;margin-top:20px;font:800 34px var(--f-display)">Рахмет! <span style="color:var(--muted)">·</span> Спасибо! <span style="color:var(--muted)">·</span> Thank you!</div>
+  <div class="logo" style="font-size:30px;margin-top:auto">ala<b>qai</b><span style="font:500 18px var(--f-body);color:var(--muted);letter-spacing:0;margin-left:10px">сабақ осы платформада дайындалды</span></div>
+</section>
+
+      <canvas id="pen" width="1600" height="900"></canvas>
+      <div id="stageOv"></div>
+      <div class="penbar" id="penbar">
+        <button class="pc on" data-pc="#E5484D" style="background:#E5484D" aria-label="Қызыл"></button>
+        <button class="pc" data-pc="#2340F0" style="background:#2340F0" aria-label="Көк"></button>
+        <button class="pc" data-pc="#0D1117" style="background:#0D1117;border-color:#555" aria-label="Қара"></button>
+        <button class="pc" data-pc="#D6FF3B" style="background:#D6FF3B" aria-label="Лайм"></button>
+        <button class="pbtn" id="penClear">Тазалау</button>
+        <button class="pbtn lime" id="penOff">Дайын</button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="nav">
+    <button class="nb" id="prev" aria-label="Алдыңғы"><span data-ic="left"></span><span class="lbt">Алдыңғы</span></button>
+    <div class="dots" id="dots"></div>
+    <button class="nb" id="next" aria-label="Келесі"><span class="lbt">Келесі</span><span data-ic="right"></span></button>
+  </footer>
+</div>
+
+<aside class="panel" id="panel" aria-hidden="true">
+  <div class="ph"><h3 id="pTitle"></h3><button class="x" id="pClose" aria-label="Жабу"><span data-ic="x"></span></button></div>
+  <div class="pb" id="pBody"></div>
+</aside>
 
 <script>
-(() => {
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+(function(){
+"use strict";
+/* ---------- icons ---------- */
+const IC={
+grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+journal:'<rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4M12 16h4M8 11h.01M8 16h.01"/>',
+users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+target:'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+timer:'<path d="M10 2h4M12 14l3-3"/><circle cx="12" cy="14" r="8"/>',
+light:'<rect x="7" y="2" width="10" height="20" rx="5"/><circle cx="12" cy="7" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="17" r="1.6"/>',
+book:'<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>',
+pen:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
+note:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>',
+max:'<path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>',
+left:'<path d="m15 18-6-6 6-6"/>',right:'<path d="m9 18 6-6-6-6"/>',x:'<path d="M18 6 6 18M6 6l12 12"/>',
+vol:'<path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/>',
+copy:'<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+play:'<path d="m6 4 14 8-14 8z"/>'
+};
+const ic=n=>'<svg class="i" viewBox="0 0 24 24" aria-hidden="true">'+(IC[n]||'')+'</svg>';
+document.querySelectorAll('[data-ic]').forEach(el=>{el.insertAdjacentHTML('afterbegin',ic(el.dataset.ic))});
 
-  /* pen drawing: every stroke draws itself, staggered */
-  document.querySelectorAll('svg.ink').forEach(svg => {
-    const parts = [...svg.querySelectorAll('path,circle,line')];
-    const step = Math.min(.16, 2.2 / Math.max(parts.length, 1));
-    parts.forEach((el, i) => {
-      el.setAttribute('pathLength', '1');
-      el.style.setProperty('--d', (i * step).toFixed(2) + 's');
-      if (el.classList.contains('thin')) el.style.setProperty('--t', '.9s');
-    });
-  });
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt=(n,d=0)=>Number(n).toLocaleString('ru-RU',{maximumFractionDigits:d,minimumFractionDigits:0}).replace(/ /g,' ');
 
-  /* reveal below the first screen */
-  const items = [...document.querySelectorAll('.rv')];
-  if (!reduce && 'IntersectionObserver' in window) {
-    const io = new IntersectionObserver(es => es.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.remove('pre'); e.target.classList.add('play'); io.unobserve(e.target); }
-    }), { threshold: .2 });
-    items.forEach(el => {
-      if (el.getBoundingClientRect().top > innerHeight) el.classList.add('pre'); else el.classList.add('play');
-      io.observe(el);
-    });
-  } else items.forEach(el => el.classList.add('play'));
+/* ---------- data ---------- */
+const G=[
+ {id:'coal',kk:'Көмір',ru:'Уголь',en:'Coal',c:'var(--g-coal)'},
+ {id:'hydro',kk:'Су',ru:'ГЭС',en:'Hydro',c:'var(--g-hydro)'},
+ {id:'solar',kk:'Күн',ru:'Солнце',en:'Solar',c:'var(--g-solar)'},
+ {id:'wind',kk:'Жел',ru:'Ветер',en:'Wind',c:'var(--g-wind)'},
+ {id:'nuclear',kk:'Атом',ru:'Атом',en:'Nuclear',c:'var(--g-nuclear)'}
+];
+const gById=id=>G.find(g=>g.id===id);
+const TEAMS=[{id:'t1',kk:'1-топ',nm:'Жасыл энергия',sub:'күн · жел · су',c:'#0FA595'},{id:'t2',kk:'2-топ',nm:'Дәстүрлі энергия',sub:'көмір · газ · атом',c:'#2340F0'}];
+const tById=id=>TEAMS.find(t=>t.id===id);
+const SRC_TEAM={solar:'t1',wind:'t1',hydro:'t1',coal:'t2',nuclear:'t2'};
+const ROSTER=[["Абдикаххарова Гулшода",7.5,"t1",""],["Икрамжанов Шахзодбек",6,"t1","C"],["Исаматова Гулида",7,"t2","B"],["Каримкулова Малика",8,"t2",""],["Корганбаев Артукжан",6.33,"t1",""],["Маматниёзов Санжар",7,"t2",""],["Махамматжанов Диёрбек",6,"t2",""],["Нематуллаева Дурдона",8.75,"t2",""],["Нуритдинова Нилуфар",7.33,"t1",""],["Равшанбеков Жасурбек",6,"t2",""],["Сайфуллаева Солиха",8.25,"t1",""],["Умарова Гулёра",9,"t1","A"],["Шадибеков Навруз",6,"t1",""],["Шаниязова Диана",8.75,"t2",""],["Эминжанова Лобар",8.33,"t1",""],["Эркинова Элмора",8.25,"t2",""]];
+const lvOf=a=>a>=8?'A':a>=7?'B':'C';
+const GLOSS=[
+ ['Электр станциясы','Электростанция','power plant'],
+ ['Жылу электр станциясы','Тепловая электростанция','thermal power plant'],
+ ['Су электр станциясы (СЭС)','Гидроэлектростанция (ГЭС)','hydroelectric power plant'],
+ ['Атом электр станциясы (АЭС)','Атомная электростанция (АЭС)','nuclear power plant'],
+ ['Күн электр станциясы','Солнечная электростанция','solar power plant'],
+ ['Жел электр станциясы','Ветровая электростанция','wind farm'],
+ ['Жаңартылатын энергия көздері (ЖЭК)','Возобновляемые источники энергии (ВИЭ)','renewable energy sources'],
+ ['Қазба отын','Ископаемое топливо','fossil fuel'],
+ ['Қуат / ПӘК','Мощность / КПД','power / efficiency']
+];
+const CARDS={
+ coal:{chain:'Химиялық → Жылу → Механикалық → Электр',txt:'Көмір қазандықта жанады, су буға айналады. Бу турбинаны, турбина генераторды айналдырады. Қазақстанның электр энергиясының шамамен үштен екісі осылай өндіріледі.',kz:'Екібастұз ГРЭС-1 — елдегі ең ірі электр станциясы, 4 000 МВт.',rows:[['Cost (LCOE)','$69–168 / MWh'],['Efficiency','33–40 %'],['CO₂ (life cycle)','≈ 820 g / kWh'],['Capacity factor','50–70 %'],['Land use','Medium: mines, ash'],['Fuel','Limited, burned once']],q:['Неге Қазақстанда көмір көп қолданылады?','Ауаға және денсаулыққа қандай әсері бар?']},
+ hydro:{chain:'Потенциалдық → Кинетикалық → Механикалық → Электр',txt:'Бөгет суды жинайды. Биіктен құлаған су турбинаны айналдырады. Отын жағылмайды, бірақ су қоймасы үлкен аумақты алады.',kz:'Шардара СЭС — Түркістан облысы. Бұқтырма СЭС — Шығыс Қазақстан.',rows:[['Cost (LCOE)','$50–100 / MWh'],['Efficiency','85–90 %'],['CO₂ (life cycle)','≈ 24 g / kWh'],['Capacity factor','30–50 %'],['Land use','Large: reservoir'],['Fuel','Renewable, needs rivers']],q:['Құрғақ жылы не болады?','Өзенге, балыққа, егіншілікке әсері?']},
+ solar:{chain:'Жарық (фотон) → Электр',txt:'Күн панеліндегі жартылай өткізгіш жарықты тікелей электр тогына айналдырады. Қозғалатын бөлшектер жоқ. Түнде өндірмейді, бұлтты күні аз өндіреді.',kz:'Оңтүстік Қазақстан: жылына ≈ 2 500–3 000 күн шуақты сағат.',rows:[['Cost (LCOE)','$38–78 / MWh'],['Efficiency','18–23 % (panel)'],['CO₂ (life cycle)','≈ 41–48 g / kWh'],['Capacity factor','15–25 %'],['Land use','Large'],['Fuel','Free, daytime only']],q:['Түнде электр қайдан алынады?','Панельді қай бағытқа, қандай бұрышпен қою керек?']},
+ wind:{chain:'Кинетикалық (жел) → Механикалық → Электр',txt:'Жел қалақтарды айналдырады, білік генераторды айналдырады. Турбина желдің энергиясының ең көбі 59 %-ын ала алады — Бетц шегі.',kz:'Жоңғар қақпасы, Ерейментау — желді аймақтар. ЖЭК өндірісінің ≈ 72 %-ы — жел (2025, I тоқсан).',rows:[['Cost (LCOE)','$37–86 / MWh'],['Efficiency','35–45 % (Betz limit 59 %)'],['CO₂ (life cycle)','≈ 11 g / kWh'],['Capacity factor','30–45 %'],['Land use','Spread out, land still usable'],['Fuel','Free, depends on weather']],q:['Жел тоқтаса не болады?','Турбинаны қайда орнату тиімді?']},
+ nuclear:{chain:'Ядролық → Жылу → Механикалық → Электр',txt:'Уран ядролары бөлінгенде көп жылу бөлінеді. Жылу суды буға айналдырады, әрі қарай жылу станциясындағыдай. CO₂ аз, бірақ радиоактивті қалдықты сақтау қиын.',kz:'2024 жылғы референдум: АЭС салуға келісім берілді. Қазақстан уран өндіруден әлемде 1-орында.',rows:[['Cost (LCOE)','$142–222 / MWh'],['Efficiency','33–37 %'],['CO₂ (life cycle)','≈ 12 g / kWh'],['Capacity factor','≈ 90 %'],['Land use','Very small'],['Fuel','Uranium; radioactive waste']],q:['Қалдықты қайда және қанша жыл сақтайды?','Неге салу бағасы жоғары?']}
+};
+const SORT=[['Көмір','n'],['Табиғи газ','n'],['Мұнай','n'],['Уран','n'],['Шымтезек','n'],['Күн','r'],['Жел','r'],['Су (өзен)','r'],['Геотермалдық жылу','r'],['Биомасса','r']];
+const MIX=[
+ {id:'coal',kk:'Көмір',c:'var(--g-coal)',co2:820,cost:110,firm:.9},
+ {id:'gas',kk:'Газ',c:'#9AA3B2',co2:490,cost:75,firm:.9},
+ {id:'hydro',kk:'Су',c:'var(--g-hydro)',co2:24,cost:65,firm:.7},
+ {id:'solar',kk:'Күн',c:'var(--g-solar)',co2:45,cost:55,firm:.2},
+ {id:'wind',kk:'Жел',c:'var(--g-wind)',co2:11,cost:60,firm:.3},
+ {id:'nuclear',kk:'Атом',c:'var(--g-nuclear)',co2:12,cost:180,firm:.95}
+];
+const PRESETS={now:{coal:67,gas:18,hydro:8,solar:2,wind:5,nuclear:0},plan:{coal:34,gas:26,hydro:11,solar:10,wind:14,nuclear:5},green:{coal:0,gas:0,hydro:20,solar:40,wind:40,nuclear:0},zero:{coal:0,gas:0,hydro:0,solar:0,wind:0,nuclear:0}};
+const QUIZ=[
+ {l:'kk',q:'Жаңартылатын энергия көзін тап.',o:['Көмір','Табиғи газ','Жел','Мұнай'],a:2},
+ {l:'ru',q:'Какие электростанции дают больше всего электроэнергии в Казахстане?',o:['ГЭС','Угольные ТЭС','Солнечные','Атомные'],a:1},
+ {l:'en',q:'Which source has the lowest CO₂ emissions per kWh?',o:['Coal','Natural gas','Wind','Oil'],a:2},
+ {l:'kk',q:'Жел электр станциясында қандай энергия электр энергиясына айналады?',o:['Жылу','Желдің кинетикалық энергиясы','Химиялық','Ядролық'],a:1},
+ {l:'ru',q:'Доля ВИЭ в выработке электроэнергии Казахстана в 2025 году?',o:['≈ 2 %','7 %','25 %','50 %'],a:1},
+ {l:'en',q:'In 2025, which share of world electricity was larger?',o:['Renewables','Coal','They were equal','Nuclear'],a:0},
+ {l:'kk',q:'Күн панелі: U = 6 В, I = 0,5 А. Қуаты қанша?',o:['3 Вт','12 Вт','0,08 Вт','6,5 Вт'],a:0},
+ {l:'en',q:'The main disadvantage of solar and wind power is that it…',o:['emits a lot of CO₂','depends on the weather','needs uranium','burns coal'],a:1},
+ {l:'kk',q:'Қазақстан уран өндіруден әлемде нешінші орында?',o:['1-орын','3-орын','5-орын','10-орын'],a:0}
+];
 
-  /* countdown to 5 Oct 2026, 12:00 Almaty time */
-  const start = new Date('2026-10-05T12:00:00+05:00').getTime();
-  const ck = document.getElementById('ck'), cv = document.getElementById('cv');
-  function tick() {
-    const ms = start - Date.now();
-    if (ms > 0) {
-      const m = Math.floor(ms / 60000), d = Math.floor(m / 1440), h = Math.floor(m % 1440 / 60), mm = m % 60;
-      ck.textContent = 'Басталуына қалды';
-      cv.textContent = (d ? d + ' күн ' : '') + (h ? h + ' сағ ' : '') + mm + ' мин';
-    } else if (ms > -3 * 3600e3) {
-      ck.textContent = 'Мереке басталды';
-      cv.textContent = 'Сізді күтеміз!';
-    } else {
-      ck.textContent = 'Мереке өтті';
-      cv.textContent = 'Келгендеріңізге рахмет!';
-    }
+/* ---------- state ---------- */
+const KEY='alaqai-sabak-11-energy-v3';
+let S={slide:0,students:[],gp:{},light:{g:0,y:0,r:0},votes:{},mix:Object.assign({},PRESETS.now),picked:[],noRepeat:true};
+function defaultStudents(){return ROSTER.map(r=>({n:r[0],a:r[1],lv:lvOf(r[1]),g:r[2],f:r[3],p:0,d:[0,0,0,0]}))}
+try{const raw=localStorage.getItem(KEY);if(raw){const o=JSON.parse(raw);if(o&&typeof o==='object')S=Object.assign(S,o)}}catch(e){}
+if(!Array.isArray(S.students)||!S.students.length)S.students=defaultStudents();
+TEAMS.forEach(t=>{if(typeof S.gp[t.id]!=='number')S.gp[t.id]=0});G.forEach(g=>{if(typeof S.votes[g.id]!=='number')S.votes[g.id]=0});
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+
+/* ---------- stage fit ---------- */
+const stage=$('#stage'), view=$('#view');
+function fit(){const r=view.getBoundingClientRect();const s=Math.max(.1,Math.min((r.width-24)/1600,(r.height-24)/900));stage.style.transform='translate(-50%,-50%) scale('+s+')'}
+if(window.ResizeObserver)new ResizeObserver(fit).observe(view);window.addEventListener('resize',fit);fit();
+
+/* ---------- slides ---------- */
+const slides=$$('#stage > .sl');
+const dots=$('#dots');
+slides.forEach((s,i)=>{const b=document.createElement('button');b.title=(i+1)+'. '+s.dataset.t;b.setAttribute('aria-label',b.title);if(s.dataset.opt)b.classList.add('opt');b.onclick=()=>go(i);dots.appendChild(b)});
+function go(i){
+  i=Math.max(0,Math.min(slides.length-1,i));S.slide=i;
+  slides.forEach((s,k)=>s.classList.toggle('on',k===i));
+  $$('#dots button').forEach((b,k)=>b.classList.toggle('on',k===i));
+  $('#cnt').textContent=(i+1)+' / '+slides.length;
+  const cur=dots.children[i];if(cur&&cur.scrollIntoView)cur.scrollIntoView({block:'nearest',inline:'center'});
+  clearPen();save();
+  if(curTool==='notes')renderNotes();if(curTool==='overview')renderOverview();
+}
+$('#prev').onclick=()=>go(S.slide-1);$('#next').onclick=()=>go(S.slide+1);
+
+/* ---------- scores in top bar ---------- */
+function renderScores(){$('#scores').innerHTML=TEAMS.map(t=>'<span class="sc" title="'+t.kk+' '+t.nm+'"><i style="background:'+t.c+'"></i>'+t.kk+' · '+S.gp[t.id]+'</span>').join('')}
+function addGP(id,d){S.gp[id]=Math.max(0,(S.gp[id]||0)+d);renderScores();save();if(curTool==='groups')renderGroups()}
+
+/* ---------- panel ---------- */
+let curTool=null;
+const panel=$('#panel');
+function openTool(t){
+  if(curTool===t){closePanel();return}
+  curTool=t;$$('.rb[data-tool]').forEach(b=>b.classList.toggle('on',b.dataset.tool===t));
+  panel.classList.add('open');panel.setAttribute('aria-hidden','false');
+  ({overview:renderOverview,journal:renderJournal,groups:renderGroups,picker:renderPicker,timer:renderTimer,light:renderLight,gloss:renderGloss,notes:renderNotes})[t]();
+}
+function closePanel(){curTool=null;panel.classList.remove('open');panel.setAttribute('aria-hidden','true');$$('.rb[data-tool]').forEach(b=>b.classList.remove('on'))}
+$$('.rb[data-tool]').forEach(b=>b.onclick=()=>openTool(b.dataset.tool));
+$('#pClose').onclick=closePanel;
+function P(title,html){$('#pTitle').textContent=title;$('#pBody').innerHTML=html}
+
+function renderOverview(){
+  P('Слайдтар','<div class="ov">'+slides.map((s,i)=>'<button class="ovb'+(i===S.slide?' on':'')+'" data-go="'+i+'"><small>'+String(i+1).padStart(2,'0')+'</small><span>'+esc(s.dataset.t)+'</span>'+(s.dataset.opt?'<em>қосымша</em>':'')+'</button>').join('')+'</div><p class="hint">Үзік сызықпен белгіленген слайдтар — қосымша. Уақыт жетпесе, өткізіп жіберуге болады.</p>');
+  $$('#pBody [data-go]').forEach(b=>b.onclick=()=>{go(+b.dataset.go)});
+}
+function renderNotes(){
+  const s=slides[S.slide];const n=s.dataset.n||'';const m=n.match(/^([^.]*мин[^.]*)\.\s*/);
+  P('Мұғалім жазбасы','<div class="notes"><span class="lbl">'+(S.slide+1)+'. '+esc(s.dataset.t)+'</span><br>'+(m?'<span class="tm">'+esc(m[1])+'</span><br>':'')+esc(m?n.slice(m[0].length):n)+'</div>');
+}
+function renderGloss(){
+  P('Глоссарий','<div class="gl">'+GLOSS.map(r=>'<div><b>'+esc(r[0])+'</b>'+esc(r[1])+'<br><em>'+esc(r[2])+'</em></div>').join('')+'</div>');
+}
+
+/* journal */
+function gOpts(sel){return TEAMS.map(t=>'<option value="'+t.id+'"'+(t.id===sel?' selected':'')+'>'+t.kk+'</option>').join('')}
+function renderJournal(edit){
+  let h='<div class="row"><button class="pbtn dark" id="jEdit">'+(edit?'Сақтау':'Тізімді өзгерту')+'</button><button class="pbtn" id="jSplit">Деңгей бойынша бөлу</button><button class="pbtn" id="jCopy">'+ic('copy')+'Excel-ге көшіру</button></div>';
+  if(edit){
+    h+='<p class="hint">Әр жолға бір оқушы. Тізімді WhatsApp немесе Excel-ден көшіріп қоюға болады.</p><textarea class="ed" id="jText">'+esc(S.students.map(s=>s.n).join('\n'))+'</textarea>';
+  }else{
+    h+='<p class="hint">Д1–Д4 — дескрипторлар (3-, 4-слайд). A/B/C — Lesson Study фокус-оқушылары. +/− — сабақтағы белсенділік ұпайы.</p>';
+    h+=S.students.map((s,i)=>{const g=tById(s.g)||TEAMS[0];const dsum=s.d[0]+s.d[1]*2+s.d[2]*2+s.d[3];
+      return '<div class="st" data-i="'+i+'"><span class="nm"><i style="background:'+g.c+'"></i>'+(s.lv?'<span class="lvlpill '+s.lv+'">'+s.lv+'</span>':'')+esc(s.n)+(s.f?' <span class="focus">'+s.f+'</span>':'')+'</span>'+
+      '<span class="ctl"><button class="mini" data-a="m" aria-label="Азайту">−</button><span class="pts">'+s.p+'</span><button class="mini" data-a="p" aria-label="Қосу">+</button></span>'+
+      '<span class="ln2"><select class="sel" data-a="g" aria-label="Топ">'+gOpts(s.g)+'</select>'+
+      [0,1,2,3].map(k=>'<button class="mini'+(s.d[k]?' on':'')+'" data-a="d'+k+'">Д'+(k+1)+'</button>').join('')+
+      '<select class="sel" data-a="f" aria-label="Фокус">'+['','A','B','C'].map(f=>'<option value="'+f+'"'+(f===s.f?' selected':'')+'>'+(f?'Фокус '+f:'—')+'</option>').join('')+'</select>'+
+      '<span class="pts" style="margin-left:auto">'+dsum+'/6</span></span></div>'}).join('');
   }
-  tick(); setInterval(tick, 20000);
+  P('Журнал және бағалау',h);
+  $('#jEdit').onclick=()=>{if(edit){const names=$('#jText').value.split('\n').map(x=>x.trim()).filter(Boolean);if(names.length){const old=S.students;S.students=names.map((n,i)=>{const o=old.find(s=>s.n===n);return o||{n,g:TEAMS[i%2].id,f:'',p:0,d:[0,0,0,0]}});S.picked=[];save()}renderJournal(false)}else renderJournal(true)};
+  $('#jSplit').onclick=()=>{splitBalanced();renderJournal(false)};
+  $('#jCopy').onclick=()=>copyJournal();
+  $$('#pBody .st').forEach(row=>{const i=+row.dataset.i,s=S.students[i];
+    row.querySelectorAll('[data-a]').forEach(el=>{const a=el.dataset.a;
+      if(el.tagName==='SELECT')el.onchange=()=>{s[a]=el.value;save();renderJournal(false)};
+      else el.onclick=()=>{if(a==='p')s.p++;else if(a==='m')s.p=Math.max(0,s.p-1);else if(a[0]==='d'){const k=+a[1];s.d[k]=s.d[k]?0:1}save();renderJournal(false)};
+    })});
+}
+function splitGroups(){const idx=S.students.map((_,i)=>i);for(let i=idx.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[idx[i],idx[j]]=[idx[j],idx[i]]}idx.forEach((si,k)=>S.students[si].g=TEAMS[k%2].id);save();renderTeams()}
+function splitBalanced(){const idx=S.students.map((_,i)=>i).sort((x,y)=>(S.students[y].a||0)-(S.students[x].a||0)+(Math.random()-.5)*.01);idx.forEach((si,k)=>{const r=k%4;S.students[si].g=(r===0||r===3)?'t1':'t2'});save();renderTeams()}
+function journalText(){const head=['Оқушы','Деңгей','Топ','Фокус','Белсенділік','Д1','Д2','Д3','Д4','Балл /6'];
+  return [head.join('\t')].concat(S.students.map(s=>[s.n,s.lv||'',(tById(s.g)||{}).kk||'',s.f,s.p,s.d[0],s.d[1]*2,s.d[2]*2,s.d[3],s.d[0]+s.d[1]*2+s.d[2]*2+s.d[3]].join('\t'))).join('\n')}
+function copyJournal(){const t=journalText();
+  const fallback=()=>{$('#pBody').insertAdjacentHTML('beforeend','<p class="hint">Көшіру бұғатталды. Мәтінді белгілеп, Ctrl+C басыңыз:</p><textarea class="ed" id="jOut">'+esc(t)+'</textarea>');const o=$('#jOut');o.focus();o.select()};
+  try{navigator.clipboard.writeText(t).then(()=>{$('#jCopy').innerHTML=ic('copy')+'Көшірілді'},fallback)}catch(e){fallback()}}
 
-  /* falling outlined maple leaves */
-  const cv2 = document.getElementById('leaves');
-  const leafPath = new Path2D('M0 -20 L4 -9 L11 -13 L9 -3 L18 -5 L13 3 L16 7 L4 6 L5 14 L0 11 L-5 14 L-4 6 L-16 7 L-13 3 L-18 -5 L-9 -3 L-11 -13 L-4 -9 Z M0 11 L0 20');
-  let W, H, ctx;
-  function fit() {
-    const d = Math.min(devicePixelRatio || 1, 2);
-    W = innerWidth; H = innerHeight; cv2.width = W * d; cv2.height = H * d;
-    ctx = cv2.getContext('2d'); ctx.setTransform(d, 0, 0, d, 0, 0);
-  }
-  fit();
-  const cols = ['#d2702a', '#b98a2e', '#c4552b'];
-  const mk = (x, y, burst) => ({
-    x: x ?? Math.random() * W, y: y ?? -30 - Math.random() * H,
-    vx: burst ? (Math.random() - .5) * 8 : (Math.random() - .5) * .3,
-    vy: burst ? -Math.random() * 8 - 3 : Math.random() * .45 + .3,
-    r: Math.random() * 6, vr: (Math.random() - .5) * .03,
-    s: Math.random() * .5 + .55, c: cols[Math.random() * cols.length | 0], burst, ph: Math.random() * 6
-  });
-  let leaves = Array.from({ length: reduce ? 0 : (W < 600 ? 9 : 14) }, () => mk());
-  function frame(t) {
-    ctx.clearRect(0, 0, W, H);
-    for (const l of leaves) {
-      if (l.burst) { l.vy += .14; l.vx *= .985; }
-      l.x += l.vx + Math.sin(t / 1500 + l.ph) * .5; l.y += l.vy; l.r += l.vr;
-      ctx.save(); ctx.translate(l.x, l.y); ctx.rotate(l.r);
-      ctx.scale(l.s * (.6 + .4 * Math.cos(t / 900 + l.ph)), l.s);
-      ctx.fillStyle = 'rgba(255,250,240,.6)'; ctx.fill(leafPath);
-      ctx.strokeStyle = l.c; ctx.lineWidth = 1.6 / l.s; ctx.lineJoin = 'round'; ctx.stroke(leafPath);
-      ctx.restore();
-    }
-    leaves = leaves.filter(l => !(l.burst && l.y > H + 40));
-    for (const l of leaves) if (!l.burst && l.y > H + 30) Object.assign(l, mk(undefined, -30));
-    requestAnimationFrame(frame);
-  }
-  requestAnimationFrame(frame);
-  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(fit, 150); });
+/* groups */
+function renderGroups(){
+  let h='<div class="row"><button class="pbtn dark" id="gBal">Деңгей бойынша теңгерімді бөлу</button><button class="pbtn" id="gSplit">Кездейсоқ</button><button class="pbtn" id="gReset">Ұпайды нөлдеу</button></div>';
+  h+=TEAMS.map(t=>{const m=S.students.filter(s=>s.g===t.id);const av=m.length?m.reduce((a,s)=>a+(s.a||0),0)/m.length:0;
+    const cnt=L=>m.filter(s=>s.lv===L).length;
+    return '<div class="gcard"><div class="gtop"><i style="background:'+t.c+'"></i><b>'+t.kk+' · '+t.nm+'</b><button class="mini" data-g="'+t.id+'" data-d="-1">−</button><span class="pts" style="font-size:22px">'+S.gp[t.id]+'</span><button class="mini" data-g="'+t.id+'" data-d="1">+</button></div>'+
+    '<div class="gmem">'+m.length+' оқушы · орташа '+av.toFixed(2).replace('.',',')+' · A '+cnt('A')+' · B '+cnt('B')+' · C '+cnt('C')+'</div><div class="gmem">'+(m.map(s=>esc(s.n)+(s.lv?' ('+s.lv+')':'')).join(', ')||'—')+'</div></div>'}).join('');
+  P('Топтар және ұпай',h);
+  $('#gBal').onclick=()=>{splitBalanced();renderGroups()};
+  $('#gSplit').onclick=()=>{splitGroups();renderGroups()};
+  $('#gReset').onclick=()=>{TEAMS.forEach(t=>S.gp[t.id]=0);renderScores();save();renderGroups()};
+  $$('#pBody [data-g]').forEach(b=>b.onclick=()=>addGP(b.dataset.g,+b.dataset.d));
+}
+function renderTeams(){const box=$('#teamsSlide');if(!box)return;
+  box.innerHTML=TEAMS.map(t=>{const m=S.students.filter(s=>s.g===t.id).slice().sort((x,y)=>x.n.localeCompare(y.n,'ru'));const av=m.length?m.reduce((a,s)=>a+(s.a||0),0)/m.length:0;const cnt=L=>m.filter(s=>s.lv===L).length;
+    return '<div class="team" style="--tc:'+t.c+'"><div class="th"><i></i><b>'+t.nm+'</b><span>'+t.kk+'</span></div><div class="sub2">'+t.sub+'</div><div class="mem">'+
+    m.map((s,i)=>'<div><span class="lvb">'+(i+1)+'</span><span class="nm2">'+esc(s.n)+'</span>'+(s.f?'<span class="fcs" title="Lesson Study">'+ic('eye')+'</span>':'')+'</div>').join('')+
+    '</div><div class="tstat"><span>'+m.length+' оқушы</span><span style="display:flex;align-items:center;gap:8px">'+ic('eye')+'Lesson Study бақылауы</span></div></div>'}).join('');}
 
-  /* "I'm coming" */
-  const go = document.getElementById('go');
-  go.addEventListener('click', () => {
-    go.textContent = 'Күтеміз!'; go.classList.add('done');
-    const b = go.getBoundingClientRect();
-    for (let i = 0; i < 40; i++) leaves.push(mk(b.left + b.width / 2, b.top, true));
-  });
+/* picker */
+function renderPicker(){
+  P('Кездейсоқ оқушы','<button class="pbtn lime" id="pkGo" style="justify-content:center;padding:18px;font-size:18px">'+ic('target')+'Оқушы таңдау (R)</button>'+
+   '<label class="row" style="font-size:14px"><span class="lbl" style="flex:1">Топтан / деңгейден</span><select class="sel" id="pkG"><option value="">Барлық сынып</option>'+gOpts('')+'<option value="lv:A">A деңгейі</option><option value="lv:B">B деңгейі</option><option value="lv:C">C деңгейі</option></select></label>'+
+   '<label class="row" style="font-size:14px;gap:10px"><input type="checkbox" id="pkNR"'+(S.noRepeat?' checked':'')+'> Бір оқушыны қайталамау</label>'+
+   '<button class="pbtn" id="pkClear">Таңдалғандарды тазалау ('+S.picked.length+')</button>'+
+   '<p class="hint">Таңдалғандар: '+(S.picked.map(esc).join(', ')||'—')+'</p>');
+  $('#pkGo').onclick=()=>pick($('#pkG').value);
+  $('#pkNR').onchange=e=>{S.noRepeat=e.target.checked;save()};
+  $('#pkClear').onclick=()=>{S.picked=[];save();renderPicker()};
+}
+let pkTimer=null;
+function pick(gid){
+  let pool=S.students.filter(s=>!gid||(gid.startsWith('lv:')?s.lv===gid.slice(3):s.g===gid));
+  if(S.noRepeat){const left=pool.filter(s=>!S.picked.includes(s.n));if(!left.length){S.picked=S.picked.filter(n=>!pool.some(s=>s.n===n))}else pool=left}
+  if(!pool.length)return;
+  const ov=$('#stageOv');ov.innerHTML='<div class="sov" id="pkOv"><div class="pick"><div class="lbl" style="font-size:20px">Кездейсоқ оқушы</div><div class="who" id="pkWho">…</div><div class="grp" id="pkGrp"></div></div></div>';
+  $('#pkOv').onclick=()=>{clearInterval(pkTimer);ov.innerHTML=''};
+  const final=pool[Math.floor(Math.random()*pool.length)];let n=0;const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  clearInterval(pkTimer);
+  const show=s=>{$('#pkWho').textContent=s.n;const g=tById(s.g);$('#pkGrp').innerHTML=g?'<span style="display:inline-block;width:18px;height:18px;border-radius:4px;background:'+g.c+';vertical-align:-2px;margin-right:10px"></span>'+g.kk+' · '+g.nm:''};
+  if(reduce){show(final)}else{pkTimer=setInterval(()=>{n++;show(pool[n%pool.length]);if(n>16){clearInterval(pkTimer);show(final)}},70)}
+  if(!S.picked.includes(final.n))S.picked.push(final.n);save();if(curTool==='picker')setTimeout(renderPicker,1300);
+}
+
+/* timer */
+let T={left:0,total:0,run:false,id:null};
+function renderTimer(){
+  P('Таймер','<div class="big" id="tBig">'+mmss(T.left)+'</div><div class="row" style="justify-content:center">'+[60,180,300,480,600].map(s=>'<button class="pbtn" data-ts="'+s+'">'+s/60+' мин</button>').join('')+'</div>'+
+  '<div class="row" style="justify-content:center"><input type="number" id="tCustom" min="1" max="90" value="2" class="sel" style="width:70px;height:38px"><button class="pbtn" id="tSet">мин орнату</button></div>'+
+  '<div class="row" style="justify-content:center"><button class="pbtn dark" id="tToggle">'+(T.run?'Тоқтату':'Бастау')+'</button><button class="pbtn" id="tReset">Нөлдеу</button></div><p class="hint">Таймер слайдтың оң жақ жоғарғы бұрышында көрінеді. Уақыт біткенде дыбыс шығады.</p>');
+  $$('#pBody [data-ts]').forEach(b=>b.onclick=()=>startTimer(+b.dataset.ts));
+  $('#tSet').onclick=()=>startTimer(Math.max(1,+$('#tCustom').value||1)*60);
+  $('#tToggle').onclick=()=>{if(T.left>0){T.run?pauseTimer():resume()}renderTimer()};
+  $('#tReset').onclick=()=>{stopTimer();renderTimer()};
+}
+const mmss=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+function startTimer(sec){T.left=sec;T.total=sec;resume();if(curTool==='timer')renderTimer()}
+function resume(){clearInterval(T.id);T.run=true;T.id=setInterval(tick,1000);drawTimer();unlockAudio()}
+function pauseTimer(){T.run=false;clearInterval(T.id);drawTimer()}
+function stopTimer(){clearInterval(T.id);T={left:0,total:0,run:false,id:null};drawTimer()}
+function tick(){T.left=Math.max(0,T.left-1);if(T.left===0){T.run=false;clearInterval(T.id);beep()}drawTimer()}
+function drawTimer(){
+  const chip=$('#tchip');let ft=$('#ftimer');
+  if(!T.total){chip.hidden=true;if(ft)ft.remove();return}
+  chip.hidden=false;chip.innerHTML=ic('timer')+mmss(T.left);chip.classList.toggle('end',T.left===0);
+  if(!ft){stage.insertAdjacentHTML('beforeend','<div class="ftimer" id="ftimer"></div>');ft=$('#ftimer');ft.onclick=()=>{T.run?pauseTimer():(T.left>0?resume():stopTimer())}}
+  ft.className='ftimer'+(T.left===0?' end':(T.left<=10?' warn':''));
+  ft.innerHTML=mmss(T.left)+'<small>'+(T.left===0?'Уақыт бітті':(T.run?'':'кідіріс'))+'</small>';
+  const b=$('#tBig');if(b)b.textContent=mmss(T.left);
+}
+$('#tchip').onclick=()=>openTool('timer');
+let AC=null;
+function unlockAudio(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume()}catch(e){}}
+function beep(){try{unlockAudio();if(!AC)return;[0,.35,.7].forEach(t=>{const o=AC.createOscillator(),g=AC.createGain();o.frequency.value=880;o.connect(g);g.connect(AC.destination);g.gain.setValueAtTime(.0001,AC.currentTime+t);g.gain.exponentialRampToValueAtTime(.3,AC.currentTime+t+.02);g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+t+.28);o.start(AC.currentTime+t);o.stop(AC.currentTime+t+.3)})}catch(e){}}
+$$('[data-timer]').forEach(b=>b.onclick=()=>startTimer(+b.dataset.timer));
+
+/* traffic light */
+function renderLight(){
+  const L=S.light,tot=L.g+L.y+L.r||1;
+  P('Бағдаршам','<p class="hint">Оқушылар түсті карточка көтереді. Әр түсті санап, батырманы басыңыз.</p><div class="tl">'+
+   [['g','var(--ok)','Түсіндім'],['y','var(--warn)','Сұрағым бар'],['r','var(--bad)','Көмек керек']].map(x=>'<button class="tlb" data-l="'+x[0]+'" style="background:'+x[1]+'"><span>'+L[x[0]]+'</span>'+x[2]+'</button>').join('')+
+   '</div><div class="tlbar"><div style="width:'+L.g/tot*100+'%;background:var(--ok)"></div><div style="width:'+L.y/tot*100+'%;background:var(--warn)"></div><div style="width:'+L.r/tot*100+'%;background:var(--bad)"></div></div>'+
+   '<div class="row">'+['g','y','r'].map(k=>'<button class="pbtn" data-lm="'+k+'">'+({g:'Жасыл',y:'Сары',r:'Қызыл'})[k]+' −1</button>').join('')+'<button class="pbtn" id="lReset">Нөлдеу</button></div>');
+  $$('#pBody [data-l]').forEach(b=>b.onclick=()=>{S.light[b.dataset.l]++;save();renderLight()});
+  $$('#pBody [data-lm]').forEach(b=>b.onclick=()=>{S.light[b.dataset.lm]=Math.max(0,S.light[b.dataset.lm]-1);save();renderLight()});
+  $('#lReset').onclick=()=>{S.light={g:0,y:0,r:0};save();renderLight()};
+}
+
+/* ---------- pen ---------- */
+const pen=$('#pen'),ctx=pen.getContext('2d');let penOn=false,drawing=false,penColor='#E5484D',last=null;
+function setPen(on){penOn=on;pen.classList.toggle('on',on);$('#penbar').classList.toggle('on',on);$('#penBtn').classList.toggle('on',on)}
+function clearPen(){ctx.clearRect(0,0,1600,900)}
+function pp(e){const r=pen.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*1600,y:(e.clientY-r.top)/r.height*900}}
+pen.addEventListener('pointerdown',e=>{if(!penOn)return;drawing=true;last=pp(e);try{pen.setPointerCapture(e.pointerId)}catch(_){}});
+pen.addEventListener('pointermove',e=>{if(!drawing)return;const p=pp(e);ctx.strokeStyle=penColor;ctx.lineWidth=penColor==='#D6FF3B'?22:6;ctx.lineCap='round';ctx.lineJoin='round';ctx.globalAlpha=penColor==='#D6FF3B'?.6:1;ctx.beginPath();ctx.moveTo(last.x,last.y);ctx.lineTo(p.x,p.y);ctx.stroke();last=p});
+['pointerup','pointercancel','pointerleave'].forEach(t=>pen.addEventListener(t,()=>{drawing=false}));
+$('#penBtn').onclick=()=>setPen(!penOn);
+$('#penOff').onclick=()=>setPen(false);$('#penClear').onclick=clearPen;
+$$('[data-pc]').forEach(b=>b.onclick=()=>{penColor=b.dataset.pc;$$('[data-pc]').forEach(x=>x.classList.toggle('on',x===b))});
+
+/* fullscreen */
+$('#fsBtn').onclick=()=>{try{if(document.fullscreenElement)document.exitFullscreen();else{const p=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();if(p&&p.catch)p.catch(()=>{})}}catch(e){}};
+
+/* ---------- slide 2: reveal ---------- */
+$$('[data-rv]').forEach(b=>b.onclick=()=>b.classList.toggle('hid'));
+$$('[data-ans]').forEach(b=>b.onclick=()=>b.classList.toggle('hid'));
+
+/* ---------- slide 5: glossary table ---------- */
+function speak(t){try{const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=.9;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
+$('#gtb').innerHTML=GLOSS.map(r=>'<tr><td>'+esc(r[0])+'</td><td>'+esc(r[1])+'</td><td><button class="say" data-say="'+esc(r[2])+'">'+ic('vol')+esc(r[2])+'</button></td></tr>').join('');
+$$('[data-say]').forEach(b=>b.onclick=()=>speak(b.dataset.say));
+
+/* ---------- slide 6: bill calc ---------- */
+let base=null;
+function calc(){const k=Math.max(0,+$('#kwh').value||0),t=Math.max(0,+$('#tar').value||0);
+  $('#o-pay').innerHTML=fmt(k*t)+'<small>₸</small>';
+  $('#o-coal').innerHTML=fmt(k*12*.5)+'<small>кг</small>';
+  $('#o-co2').innerHTML=fmt(k*12)+'<small>кг</small>';
+  $('#o-tree').innerHTML=fmt(Math.ceil(k*12/22))+'<small>ағаш</small>';
+  if(base!==null&&base>k)$('#o-coal').innerHTML+='<small style="display:block;margin:8px 0 0;font-size:20px;color:var(--ink)">үнемдеу: '+fmt((base-k)*12*.5)+' кг</small>';}
+$('#kwh').oninput=()=>{$('#kwhR').value=$('#kwh').value;calc()};
+$('#kwhR').oninput=()=>{$('#kwh').value=$('#kwhR').value;calc()};
+$('#tar').oninput=calc;
+$('#save20').onclick=()=>{const k=+$('#kwh').value||0;if(base===null)base=k;const v=Math.round(base*.8);$('#kwh').value=v;$('#kwhR').value=v;calc()};
+$('#saveReset').onclick=()=>{if(base!==null){$('#kwh').value=base;$('#kwhR').value=base}base=null;calc()};
+calc();
+
+/* ---------- slide 7: sort ---------- */
+let sortSel=null;
+function sortInit(){const pool=$('#sortPool');pool.innerHTML='';$$('.bin .pool').forEach(p=>p.innerHTML='');$('#sortRes').textContent='';
+  SORT.slice().sort(()=>Math.random()-.5).forEach(([n,k])=>{const c=document.createElement('div');c.className='card';c.textContent=n;c.dataset.k=k;c.draggable=true;c.tabIndex=0;
+    c.onclick=e=>{e.stopPropagation();if(sortSel===c){c.classList.remove('sel');sortSel=null;return}if(sortSel)sortSel.classList.remove('sel');sortSel=c;c.classList.add('sel')};
+    c.addEventListener('dragstart',e=>{sortSel=c;try{e.dataTransfer.setData('text/plain',n)}catch(_){}});
+    pool.appendChild(c)})}
+$$('.bin').forEach(bin=>{
+  const put=()=>{if(!sortSel)return;sortSel.classList.remove('sel','ok','bad');bin.querySelector('.pool').appendChild(sortSel);sortSel=null};
+  bin.onclick=put;
+  bin.addEventListener('dragover',e=>{e.preventDefault();bin.classList.add('over')});
+  bin.addEventListener('dragleave',()=>bin.classList.remove('over'));
+  bin.addEventListener('drop',e=>{e.preventDefault();bin.classList.remove('over');put()});
+});
+$('#sortCheck').onclick=()=>{let ok=0;$$('.bin').forEach(bin=>bin.querySelectorAll('.card').forEach(c=>{const r=c.dataset.k===bin.dataset.bin;c.classList.toggle('ok',r);c.classList.toggle('bad',!r);if(r)ok++}));const left=$('#sortPool').children.length;$('#sortRes').textContent=ok+' / '+SORT.length+' дұрыс'+(left?' · '+left+' карточка қалды':'')};
+$('#sortReset').onclick=sortInit;sortInit();
+
+/* ---------- slide 10: expert tiles + card modal ---------- */
+$('#gtiles').innerHTML=G.map(g=>{const t=tById(SRC_TEAM[g.id]);return '<button class="gtile" data-card="'+g.id+'" style="background:'+g.c+'"><span style="font:800 15px var(--f-mono);background:#fff;color:var(--ink);border-radius:7px;padding:4px 8px;align-self:flex-start;opacity:1">'+t.kk+'</span><b>'+g.kk+'</b><span>'+g.ru+' · '+g.en+'</span><em>'+ic('eye')+'Карточканы ашу</em></button>'}).join('');
+$$('[data-card]').forEach(b=>b.onclick=()=>openCard(b.dataset.card));
+function openCard(id){const g=gById(id),c=CARDS[id];
+  $('#stageOv').innerHTML='<div class="sov" id="cardOv"><div class="dcard" role="dialog"><div class="a"><div class="row" style="justify-content:space-between"><span class="eb"><span style="width:22px;height:22px;border-radius:5px;background:'+g.c+';display:inline-block"></span>'+g.kk+' · '+g.en+'</span><button class="btn" id="cardX" style="padding:10px 14px">'+ic('x')+'</button></div>'+
+  '<h2 class="h2" style="font-size:52px">'+g.kk+' энергиясы</h2><span class="k">Энергия түрленуі</span><div class="chain">'+esc(c.chain)+'</div><p style="margin:0;font-size:25px">'+esc(c.txt)+'</p><p style="margin:0;font-size:23px;border-left:6px solid '+g.c+';padding-left:18px"><b>Қазақстанда:</b> '+esc(c.kz)+'</p></div>'+
+  '<div class="b"><span class="k">Data · Деректер (EN)</span><table class="dt">'+c.rows.map(r=>'<tr><td>'+esc(r[0])+'</td><td>'+esc(r[1])+'</td></tr>').join('')+'</table><span class="k" style="margin-top:12px">Ойлан</span><div class="think">'+c.q.map(q=>'<div>'+esc(q)+'</div>').join('')+'</div><span style="margin-top:auto;font-size:15px;color:var(--muted)">Жуық мәндер: IPCC (2014), Lazard (2024), IRENA</span></div></div></div>';
+  $('#cardOv').onclick=e=>{if(e.target.id==='cardOv')closeOv()};$('#cardX').onclick=closeOv;
+}
+function closeOv(){$('#stageOv').innerHTML='';clearInterval(pkTimer)}
+
+/* ---------- slide 11: STEM problem ---------- */
+function stem(){const N=Math.max(0,+$('#hh').value||0),e=Math.max(0,+$('#ehh').value||0);const E=N*e*12;
+  $('#ansA').innerHTML='E = '+fmt(N)+' · '+fmt(e)+' · 12<br>= '+fmt(E)+' кВт·сағ<br>≈ '+fmt(E/1e6,1)+' ГВт·сағ';
+  $('#ansB').innerHTML='Көмір: '+fmt(E*.5/1000)+' т<br>Панель: '+fmt(Math.ceil(E/600))+' дана<br>Турбина: '+fmt(Math.ceil(E/9.2e6))+' дана';
+  const co=E*.82/1000,cw=E*.011/1000;
+  $('#ansC').innerHTML='Көмір: '+fmt(co)+' т CO₂<br>Жел: '+fmt(cw)+' т CO₂<br>≈ '+fmt(cw?co/cw:0)+' есе аз';}
+$('#hh').oninput=stem;$('#ehh').oninput=stem;stem();
+
+/* ---------- slide 12: experiment ---------- */
+const EXP=[['Тік жарық',5.2,180],['45° бұрыш',4.8,120],['Көлеңке',3.1,25]];
+$('#expBody').innerHTML=EXP.map((r,i)=>'<tr><td>'+r[0]+'</td><td><input id="eu'+i+'" type="number" step="0.1" value="'+r[1]+'" aria-label="Кернеу '+r[0]+'"></td><td><input id="ei'+i+'" type="number" value="'+r[2]+'" aria-label="Ток '+r[0]+'"></td><td class="pv" id="ep'+i+'"></td></tr>').join('');
+function exp(){let p0=0;EXP.forEach((_,i)=>{const p=(+$('#eu'+i).value||0)*(+$('#ei'+i).value||0)/1000;if(i===0)p0=p;$('#ep'+i).textContent=fmt(p,2)+' Вт'});const L=+$('#load').value||0;$('#expN').innerHTML=(p0>0?fmt(Math.ceil(L/p0)):'—')+'<small>панель</small>'}
+$$('#expBody input,#load').forEach(i=>i.oninput=exp);exp();
+
+/* ---------- slide 13: council order ---------- */
+$('#council').innerHTML=TEAMS.map(t=>'<button class="ob" data-co="'+t.id+'" style="background:'+t.c+'">'+ic('play')+t.kk+' «'+t.nm+'» · 2 мин</button>').join('')+'<button class="ob" id="coPlus" style="background:var(--ink)">Жақсы дәлел: сөйлеп тұрған топқа +1</button>';
+let speaking=null;
+$$('[data-co]').forEach(b=>b.onclick=()=>{speaking=b.dataset.co;startTimer(120);$$('[data-co]').forEach(x=>x.style.outline=x===b?'4px solid var(--ink)':'none');$$('[data-co]').forEach(x=>x.style.outlineOffset='3px')});
+$('#coPlus').onclick=()=>{if(speaking)addGP(speaking,1)};
+
+/* ---------- slide 14: mix builder ---------- */
+$('#sliders').innerHTML=MIX.map(m=>'<div class="sr"><span class="n"><i style="background:'+m.c+'"></i>'+m.kk+'</span><input type="range" min="0" max="100" step="1" id="mx-'+m.id+'" aria-label="'+m.kk+'" style="accent-color:'+m.c+'"><span class="p" id="mp-'+m.id+'"></span></div>').join('');
+MIX.forEach(m=>{$('#mx-'+m.id).oninput=e=>{S.mix[m.id]=+e.target.value;mixDraw();save()}});
+function mixDraw(){const tot=MIX.reduce((a,m)=>a+(S.mix[m.id]||0),0);
+  MIX.forEach(m=>{$('#mx-'+m.id).value=S.mix[m.id]||0;$('#mp-'+m.id).textContent=(S.mix[m.id]||0)+'%'});
+  const tb=$('#mixTotal');tb.textContent=tot+' %';tb.className=tot===100?'ok':'bad';$('#mixNorm').hidden=tot===100||tot===0;
+  const w=m=>tot?(S.mix[m.id]||0)/tot:0;
+  $('#mixStack').innerHTML=tot?MIX.filter(m=>S.mix[m.id]).map(m=>'<div style="width:'+w(m)*100+'%;background:'+m.c+'">'+(w(m)>=.07?Math.round(w(m)*100)+'%':'')+'</div>').join(''):'<div style="width:100%;background:var(--soft);color:var(--muted)">слайдерлерді жылжытыңыз</div>';
+  const co2=MIX.reduce((a,m)=>a+w(m)*m.co2,0),cost=MIX.reduce((a,m)=>a+w(m)*m.cost,0),rel=MIX.reduce((a,m)=>a+w(m)*m.firm,0)*100;
+  const has=tot>0;
+  $('#vCo2').innerHTML=has?fmt(co2)+'<small>г/кВт·сағ</small>':'—';$('#vRel').innerHTML=has?fmt(rel)+'<small>%</small>':'—';$('#vCost').innerHTML=has?fmt(cost)+'<small>$/МВт·сағ</small>':'—';
+  const pl=(el,ok,t)=>{el.className='pill '+(has?(ok?'ok':'bad'):'');el.textContent=has?t:''};
+  pl($('#pCo2'),co2<=400,co2<=400?'≤ 400 · орындалды':'> 400 · тым көп');
+  pl($('#pRel'),rel>=70,rel>=70?'≥ 70 % · сенімді':'< 70 % · жарық сөнуі мүмкін');
+  pl($('#pCost'),cost<=100,cost<=100?'≤ 100 · қолжетімді':'> 100 · қымбат');}
+$('#mixNorm').onclick=()=>{const tot=MIX.reduce((a,m)=>a+(S.mix[m.id]||0),0);if(!tot)return;let acc=0;MIX.forEach((m,i)=>{if(i<MIX.length-1){S.mix[m.id]=Math.round((S.mix[m.id]||0)/tot*100);acc+=S.mix[m.id]}});const lastId=MIX[MIX.length-1].id;S.mix[lastId]=Math.max(0,100-acc);mixDraw();save()};
+$$('[data-preset]').forEach(b=>b.onclick=()=>{S.mix=Object.assign({},PRESETS[b.dataset.preset]);mixDraw();save()});
+mixDraw();
+
+/* ---------- race game ---------- */
+const RQ=[
+ ['Жаңартылатын энергия көзі қайсы?',['Жел','Көмір','Мұнай'],0],
+ ['Қуаттың өлшем бірлігі?',['Ватт','Вольт','Ампер'],0],
+ ['Кернеудің өлшем бірлігі?',['Вольт','Ватт','Метр'],0],
+ ['Ток күшінің өлшем бірлігі?',['Ампер','Вольт','Джоуль'],0],
+ ['1 кВт = ? Вт',['1000','100','10'],0],
+ ['Күн панелі нені электрге айналдырады?',['Жарықты','Желді','Суды'],0],
+ ['Су электр станциясында турбинаны не айналдырады?',['Су','Көмір','Күн'],0],
+ ['Атом электр станциясының отыны?',['Уран','Көмір','Газ'],0],
+ ['Түнде қай станция электр өндірмейді?',['Күн','Көмір','Атом'],0],
+ ['Қай станция CO₂-ні ең көп шығарады?',['Көмір','Жел','Күн'],0],
+ ['Қазақстанда электрдің көбі неден өндіріледі?',['Көмірден','Желден','Күннен'],0],
+ ['Шардара СЭС қай облыста?',['Түркістан','Павлодар','Атырау'],0],
+ ['Екібастұз ГРЭС қандай отынмен жұмыс істейді?',['Көмір','Уран','Су'],0],
+ ['Трансформатор нені өзгертеді?',['Кернеуді','Массаны','Температураны'],0],
+ ['Электрді алысқа қандай кернеумен тасымалдайды?',['Жоғары','Төмен','Нөлдік'],0],
+ ['Генератор механикалық энергияны … айналдырады',['электр энергиясына','жылуға','жарыққа'],0],
+ ['P = U · I. U = 2 В, I = 3 А. P = ?',['6 Вт','5 Вт','1 Вт'],0],
+ ['P = U · I. U = 10 В, I = 2 А. P = ?',['20 Вт','12 Вт','5 Вт'],0],
+ ['100 Вт шам 10 сағат жанды. Энергия?',['1 кВт·сағ','10 кВт·сағ','100 кВт·сағ'],0],
+ ['Тұрмыста электр энергиясын немен өлшейміз?',['кВт·сағ','кг','литр'],0],
+ ['Жаңартылмайтын энергия көзі?',['Газ','Күн','Жел'],0],
+ ['Қай энергия көзі ауа райына тәуелді?',['Жел','Көмір','Атом'],0],
+ ['ЖЭК дегеніміз…',['жаңартылатын энергия көздері','жылу электр станциясы','жоғары кернеу'],0],
+ ['Wind — қазақша?',['Жел','Күн','Су'],0],
+ ['Solar — қазақша?',['Күн','Жел','Көмір'],0],
+ ['Coal — қазақша?',['Көмір','Газ','Мұнай'],0],
+ ['Power plant — қазақша?',['Электр станциясы','Зауыт','Үй'],0],
+ ['Renewable — қазақша?',['Жаңартылатын','Қымбат','Ескі'],0],
+ ['Уголь — қазақша?',['Көмір','Мұнай','Уран'],0],
+ ['Ветер — қазақша?',['Жел','Су','Күн'],0],
+ ['Солнце — по-английски?',['Sun','Wind','Water'],0],
+ ['Электростанция — по-английски?',['Power plant','Power bank','Bus station'],0],
+ ['Which is renewable?',['Solar','Coal','Gas'],0],
+ ['Which makes more CO₂?',['Coal','Wind','Solar'],0],
+ ['Электр энергиясын үнемдеу жолы?',['Шамды өшіру','Терезені ашу','Суды төгу'],0],
+ ['Күн панелін қай жаққа қаратқан дұрыс?',['Оңтүстікке','Солтүстікке','Жерге'],0],
+ ['Жел турбинасы қай жерде тиімді?',['Желді жерде','Орманда','Үйдің ішінде'],0],
+ ['Қазақстанда ЖЭК үлесі 2025 жылы шамамен?',['7 %','70 %','0 %'],0],
+ ['Жел станциясында қандай энергия электрге айналады?',['Кинетикалық','Химиялық','Ядролық'],0],
+ ['Көмір станциясында көмір жанғанда не пайда болады?',['Жылу','Уран','Жел'],0]
+];
+const STEPS=20;
+let R={run:false,t1:null,t2:null};
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+function newSide(){return{pos:0,deck:shuffle(RQ.map((_,i)=>i)),k:0,q:null,lock:0,busy:false,tm:null}}
+const ICN={plant:'<svg viewBox="0 0 24 24"><path d="M2 21h20M4 21V11l5 3V11l5 3V5h3l1 16"/><path d="M17 5V2"/></svg>',house:'<svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9v12h14V9"/><path d="M10 21v-6h4v6"/></svg>',bolt:'<svg viewBox="0 0 24 24"><path d="M13.5 1 4 13.5h7L9.8 23 20 10.2h-7.2z"/></svg>'};
+function raceBuild(){
+  const box=$('#race');
+  box.innerHTML='<h2 class="h2" style="font-size:38px">Ток <span class="mk">үйге</span> жетсін! Қай топ жылдам?</h2><div class="tracks">'+TEAMS.map(t=>'<div class="track" style="--tc:'+t.c+'"><div class="plant">'+ICN.plant+t.kk+'</div><div class="wire"><div class="ln"></div><div class="fl" id="fl-'+t.id+'"></div><div class="nodes">'+Array.from({length:STEPS+1},(_,i)=>'<span class="nd" data-nd="'+t.id+'-'+i+'"></span>').join('')+'</div><div class="spark" id="sp-'+t.id+'">'+ICN.bolt+'</div></div><div class="house" id="hs-'+t.id+'">'+ICN.house+'Үй</div></div>').join('')+'</div>'+
+  '<div class="sides">'+TEAMS.map(t=>'<div class="side" style="--tc:'+t.c+'" id="sd-'+t.id+'"></div>').join('')+'</div>'+
+  '<div class="rctl"><button class="btn dark" id="rStart">'+ic('play')+'Бастау</button><button class="btn" id="rReset">Қайта бастау</button></div>';
+  $('#rStart').onclick=raceStart;$('#rReset').onclick=raceReset;
+  raceReset();
+}
+function raceReset(){TEAMS.forEach(t=>{if(R[t.id]&&R[t.id].tm)clearInterval(R[t.id].tm);R[t.id]=newSide()});R.run=false;R.done=false;const w=$('#rwin');if(w)w.remove();const c=$('#cdown');if(c)c.remove();TEAMS.forEach(t=>{drawTrack(t.id);drawSide(t.id)});$('#rStart').hidden=false}
+function drawTrack(id){const sd=R[id];const pct=sd.pos/STEPS*100;
+  $('#fl-'+id).style.width=pct+'%';$('#sp-'+id).style.left='calc('+pct+'% + '+(11-22*sd.pos/STEPS)+'px)';
+  for(let i=0;i<=STEPS;i++){const n=document.querySelector('[data-nd="'+id+'-'+i+'"]');if(n)n.classList.toggle('on',i<=sd.pos)}
+  $('#hs-'+id).classList.toggle('lit',sd.pos>=STEPS);}
+function drawSide(id){const t=tById(id),sd=R[id],el=$('#sd-'+id);
+  let h='<div class="sh"><i></i>'+t.kk+' · '+t.nm+'<span>'+sd.pos+' / '+STEPS+'</span></div>';
+  if(!R.run&&!R.done){h+='<div class="q" style="color:var(--muted)">«Бастау» батырмасын басыңыз</div><div class="ops">'+[0,1,2].map(k=>'<div class="op" style="opacity:.35"><b>'+'ABC'[k]+'</b>…</div>').join('')+'</div>'}
+  else if(sd.q!==null){const q=RQ[sd.q];h+='<div class="q">'+esc(q[0])+'</div><div class="ops">'+sd.ord.map((oi,k)=>'<button class="op" data-side="'+id+'" data-oi="'+oi+'"><b>'+'ABC'[k]+'</b>'+esc(q[1][oi])+'</button>').join('')+'</div>'}
+  if(sd.lock>0)h+='<div class="lock">Қысқа тұйықталу!<span>'+sd.lock+'</span><small>Қате жауап · күте тұрыңдар</small></div>';
+  el.innerHTML=h;
+  el.querySelectorAll('[data-oi]').forEach(b=>b.addEventListener('pointerdown',e=>{e.preventDefault();answer(id,+b.dataset.oi,b)}));}
+function nextQ(id){const sd=R[id];if(sd.k>=sd.deck.length){sd.deck=shuffle(sd.deck);sd.k=0}sd.q=sd.deck[sd.k++];sd.ord=shuffle([0,1,2]);sd.busy=false;drawSide(id)}
+function answer(id,oi,btn){const sd=R[id];if(!R.run||sd.busy||sd.lock>0)return;sd.busy=true;const q=RQ[sd.q];
+  if(oi===q[2]){btn.classList.add('ok');sd.pos++;drawTrack(id);tone(660,.12);
+    if(sd.pos>=STEPS){finish(id);return}
+    setTimeout(()=>nextQ(id),450);
+  }else{btn.classList.add('no');tone(180,.25);
+    const right=$('#sd-'+id).querySelector('[data-oi="'+q[2]+'"]');if(right)right.classList.add('ok');
+    setTimeout(()=>nextQ(id),350);}
+}
+function raceStart(){if(R.run)return;unlockAudio();$('#rStart').hidden=true;const st=$('#race').closest('.sl');
+  let n=3;st.insertAdjacentHTML('beforeend','<div class="cdown" id="cdown">3</div>');
+  const iv=setInterval(()=>{n--;const c=$('#cdown');if(n>0){c.textContent=n;tone(520,.1)}else{clearInterval(iv);c.remove();R.run=true;tone(880,.2);TEAMS.forEach(t=>nextQ(t.id))}},800);tone(520,.1)}
+function finish(id){R.run=false;R.done=true;const t=tById(id);addGP(id,3);beep();TEAMS.forEach(x=>{if(R[x.id].tm)clearInterval(R[x.id].tm)});
+  $('#race').closest('.sl').insertAdjacentHTML('beforeend','<div class="rwin" id="rwin" style="--tc:'+t.c+'"><div><span>Ток үйге бірінші жетті!</span><b>'+t.kk+'</b><span>«'+t.nm+'» · +3 ұпай</span><button class="btn dark" id="rAgain">Қайта ойнау</button></div></div>');
+  $('#rAgain').onclick=raceReset;}
+function tone(f,d){try{unlockAudio();if(!AC)return;const o=AC.createOscillator(),g=AC.createGain();o.frequency.value=f;o.connect(g);g.connect(AC.destination);g.gain.setValueAtTime(.0001,AC.currentTime);g.gain.exponentialRampToValueAtTime(.25,AC.currentTime+.02);g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+d);o.start();o.stop(AC.currentTime+d+.02)}catch(e){}}
+raceBuild();
+
+/* ---------- map ---------- */
+const KZP={"KZ-35": "M518.8,181.7L517.7,178.0L521.4,177.8L523.8,179.3L532.7,172.7L539.6,172.8L539.4,181.4L538.4,183.2L537.9,190.7L536.5,192.8L543.6,195.3L548.1,195.2L548.8,192.2L551.7,192.7L551.5,190.7L550.3,190.8L550.8,188.7L553.4,187.6L554.6,189.6L555.2,188.0L556.9,191.0L558.9,191.4L558.9,194.5L570.2,192.4L570.5,194.3L572.7,194.4L571.4,199.8L573.9,199.9L581.2,196.8L580.2,193.0L584.1,191.1L586.1,193.3L587.0,185.7L594.1,183.3L594.0,181.6L595.7,179.7L597.7,179.8L598.1,178.1L600.6,178.1L600.7,175.6L605.3,173.0L608.3,173.2L608.4,174.4L610.3,174.4L612.7,177.0L610.9,179.0L612.2,180.4L609.7,186.2L611.8,186.3L612.1,184.9L617.0,184.8L619.6,186.9L619.5,185.6L621.6,185.2L620.8,182.2L623.1,180.2L627.4,181.3L628.2,179.7L626.3,177.2L628.3,175.0L629.2,176.0L629.3,175.2L632.6,174.6L635.8,169.7L640.3,170.6L644.8,168.4L644.9,165.8L650.3,164.7L654.7,161.2L651.3,159.2L648.5,161.2L646.7,157.3L645.5,157.8L644.5,155.6L646.1,154.6L648.2,155.7L650.2,154.7L651.1,156.4L652.2,154.4L665.6,158.3L664.8,159.5L666.0,162.1L664.6,167.3L667.1,167.6L666.0,168.9L666.5,171.4L664.7,171.6L662.9,173.5L663.5,174.6L662.0,176.5L662.3,177.7L665.4,179.6L671.8,179.4L675.7,177.7L680.0,179.7L679.3,183.0L680.4,184.8L681.9,184.3L683.1,182.0L685.8,185.2L686.9,184.8L688.3,189.7L692.3,192.4L691.7,193.7L687.4,195.0L684.2,197.8L685.2,200.1L687.6,201.1L696.9,195.4L704.4,194.8L705.9,193.2L709.4,194.3L715.6,192.3L718.2,193.9L720.7,189.8L725.7,189.7L728.7,191.8L731.9,180.3L733.4,178.6L739.0,177.6L743.2,181.2L748.0,181.8L752.7,184.9L751.6,191.6L753.9,193.6L753.5,195.8L747.9,200.8L741.1,204.2L741.4,212.2L739.6,215.4L741.0,219.7L733.3,219.1L727.6,221.8L727.2,223.8L729.1,227.2L734.8,230.8L734.8,233.1L737.9,236.0L733.2,237.1L733.1,243.1L734.3,244.3L744.1,242.8L745.1,246.9L744.7,250.9L740.9,255.9L736.2,255.5L734.8,256.2L734.5,258.8L732.9,259.0L736.7,263.3L740.8,263.9L740.7,264.8L738.6,265.1L738.2,266.3L741.0,269.8L745.3,271.0L741.2,272.9L741.8,275.1L740.5,275.6L740.0,278.9L738.1,278.7L736.4,286.4L738.5,294.6L734.0,293.7L733.5,299.1L731.9,300.7L740.4,306.7L742.7,303.3L748.3,303.8L750.5,323.2L745.3,323.5L743.5,326.1L739.7,325.9L738.9,323.2L737.2,322.3L735.7,323.4L733.1,321.2L735.5,326.2L727.6,321.6L725.7,322.5L726.0,324.2L723.5,322.4L722.1,323.2L721.9,320.7L718.5,322.6L714.2,319.0L701.5,320.1L696.8,321.0L689.4,325.5L682.8,326.6L668.8,340.6L666.3,345.6L600.4,345.3L600.5,333.8L599.4,327.5L600.9,319.7L600.0,295.4L601.8,286.0L606.5,290.0L609.8,290.9L611.5,284.3L613.2,284.2L615.9,281.6L619.6,280.8L615.2,272.2L615.9,267.6L612.9,262.1L615.6,261.0L616.7,247.9L619.3,247.0L618.1,243.7L619.2,243.7L619.0,240.2L616.6,239.3L617.2,237.6L615.3,236.1L615.3,231.5L608.7,231.7L607.7,231.2L608.0,229.1L592.7,231.4L588.2,228.2L587.0,224.5L581.7,223.5L581.9,232.6L578.8,242.7L564.3,244.8L563.0,247.8L554.6,250.4L551.5,248.8L548.1,244.9L542.1,244.9L537.6,242.4L529.1,232.3L519.0,231.2L517.5,222.4L514.0,217.7L512.3,212.5L509.4,211.4L505.8,204.6L511.6,197.3L510.1,195.7L510.7,193.6L519.5,190.2L522.5,185.7L520.1,183.1L520.5,182.2L518.8,181.7Z", "KZ-15": "M398.7,302.7L397.2,303.2L396.5,301.9L389.8,300.9L390.4,297.8L383.8,290.5L380.9,290.0L377.6,283.6L374.0,279.8L360.4,280.1L349.9,305.6L339.5,305.2L339.0,312.8L330.7,313.4L317.0,327.6L304.3,345.3L305.9,370.0L293.6,360.3L249.2,375.2L245.8,348.3L242.5,340.8L241.9,336.9L238.9,332.1L238.2,327.1L224.9,323.0L218.0,319.5L212.8,314.1L207.2,302.3L210.1,281.6L209.6,275.2L205.7,270.1L206.4,263.9L204.3,260.4L205.5,253.4L205.1,248.1L201.2,246.9L198.9,244.8L198.4,245.9L197.0,245.5L196.1,250.6L194.2,250.5L183.7,246.1L182.9,231.4L181.0,231.7L180.2,234.1L174.2,228.9L176.6,222.3L175.7,220.4L177.2,221.1L178.2,218.7L180.1,217.1L182.4,217.1L182.9,215.3L187.9,215.6L190.3,214.3L189.7,213.3L191.9,209.9L194.6,209.9L193.2,208.3L196.5,201.1L196.2,199.3L193.3,197.3L193.4,193.3L191.8,189.7L196.9,181.7L197.9,182.2L200.7,179.2L198.9,172.0L199.9,169.5L195.8,168.1L197.4,167.7L196.3,165.4L200.9,164.2L202.1,166.1L204.7,167.1L204.6,168.5L209.2,168.4L210.3,169.9L208.5,172.1L216.4,178.1L216.9,177.1L219.3,177.5L220.0,179.5L224.9,181.8L226.3,179.8L228.9,179.3L234.6,174.5L235.6,167.8L240.0,169.2L240.3,166.8L242.3,166.9L242.0,163.6L243.6,162.5L246.1,166.1L248.4,166.7L249.3,166.3L248.2,162.8L250.2,162.2L252.6,163.4L254.0,162.5L255.0,163.3L259.8,161.5L260.6,164.2L262.3,164.2L263.2,167.7L267.6,170.1L268.8,167.9L273.7,168.5L273.9,160.6L276.3,162.0L277.5,161.4L278.3,162.5L281.3,161.2L281.7,163.0L283.5,163.4L284.3,161.0L287.2,159.8L288.7,162.9L291.2,162.3L294.2,163.9L294.9,166.1L293.4,167.8L293.7,170.3L296.0,169.7L295.2,172.5L298.1,172.3L300.5,176.4L308.2,177.4L310.2,178.8L315.1,178.5L317.2,180.7L314.7,180.6L315.8,183.8L318.3,182.5L323.1,182.3L327.5,177.3L326.9,173.9L328.0,172.0L332.1,171.4L332.8,172.3L332.0,173.6L335.4,177.5L347.1,178.0L362.5,172.6L365.4,157.0L370.7,155.9L372.2,154.2L375.7,162.4L377.5,163.0L378.9,160.6L382.6,162.7L380.8,165.1L381.3,166.4L386.1,170.9L383.3,171.3L382.4,172.7L381.1,172.3L382.4,175.6L381.3,177.3L382.2,178.5L386.4,176.8L388.5,183.0L388.0,184.4L391.3,188.0L393.6,194.0L395.6,195.7L398.7,201.8L398.1,205.9L394.8,203.9L391.6,204.9L390.2,206.6L389.2,211.1L386.3,213.0L387.2,217.4L384.6,216.8L383.1,219.7L389.0,228.5L384.8,229.1L384.5,230.4L386.5,230.5L389.0,236.9L396.1,243.0L400.4,240.1L403.0,242.5L401.1,246.3L401.8,249.0L409.9,251.9L418.4,257.3L426.9,273.5L430.6,277.2L424.3,284.3L415.6,291.0L405.3,296.6L398.7,302.7Z", "KZ-27": "M46.9,268.7L18.5,265.7L17.1,265.2L17.4,263.9L2.2,258.0L9.1,239.3L13.8,236.6L15.7,231.6L14.4,229.2L9.2,225.4L12.1,206.5L18.8,203.9L22.2,199.3L23.0,198.2L20.7,194.7L22.5,193.0L21.7,190.7L24.3,189.5L27.5,185.0L29.8,185.2L30.4,186.9L37.0,192.8L38.8,196.5L41.1,198.3L44.0,206.4L46.1,206.2L49.1,208.8L49.4,207.5L56.5,204.4L60.3,200.9L59.1,198.4L56.9,198.1L58.0,195.5L56.2,192.3L54.5,180.8L52.3,178.8L53.1,177.8L55.3,179.6L58.2,180.2L62.9,177.0L65.7,173.4L72.8,171.0L72.5,167.0L70.8,166.1L73.6,161.1L74.4,162.1L81.3,161.7L86.9,156.8L92.6,155.5L95.7,153.6L94.9,151.8L96.4,151.0L95.7,150.2L98.7,150.2L98.7,148.8L100.1,148.6L99.7,144.4L100.9,144.3L100.8,142.4L104.3,143.0L103.1,144.9L106.3,144.5L106.8,142.2L105.2,137.8L107.7,138.5L108.2,141.1L117.4,140.9L118.1,142.5L120.0,142.5L120.0,145.3L116.6,145.3L117.7,148.0L122.7,148.2L125.4,145.8L126.6,149.5L130.4,147.7L129.4,144.6L131.4,141.3L137.1,141.9L139.1,140.9L139.3,139.2L143.0,138.8L142.6,138.0L143.5,137.7L144.2,141.0L148.4,149.3L150.7,147.9L151.5,149.2L151.2,148.4L152.8,148.1L153.4,146.8L155.0,148.1L156.5,147.4L155.9,148.5L157.2,147.7L157.8,149.2L157.7,148.4L160.7,147.4L162.7,148.1L162.4,146.8L163.5,146.3L163.3,147.1L165.1,147.2L165.6,148.3L169.2,148.2L169.5,149.8L170.7,149.2L174.1,151.4L173.3,154.6L175.0,157.3L184.4,160.1L186.6,162.0L187.8,166.8L190.0,167.4L190.1,169.3L195.6,170.8L193.0,179.3L196.7,183.0L191.8,189.7L193.4,193.3L193.3,197.3L196.2,199.3L196.5,201.1L193.2,208.3L194.6,209.9L191.9,209.9L189.7,213.3L190.3,214.3L187.9,215.6L182.9,215.3L182.4,217.1L180.1,217.1L178.2,218.7L177.2,221.1L175.7,220.4L176.6,222.3L175.0,227.6L168.3,234.0L169.0,235.7L165.3,237.0L154.8,235.9L153.7,238.3L151.9,237.7L152.1,246.2L149.7,246.0L147.8,252.3L148.3,255.1L144.1,255.8L138.6,252.8L136.3,253.8L129.3,252.8L130.2,249.0L124.3,247.5L117.1,247.7L111.8,248.8L110.6,252.5L108.8,254.0L92.2,263.5L85.8,270.4L72.7,271.8L73.4,275.3L59.8,270.5L46.9,268.7Z", "KZ-62": "M600.4,345.3L500.4,345.6L499.5,340.4L493.9,339.4L469.6,339.2L462.2,337.9L457.0,334.4L451.4,328.4L446.6,327.5L434.7,320.8L420.3,315.5L417.7,315.7L412.1,312.2L407.2,310.6L404.9,308.5L408.8,307.3L409.7,305.5L398.7,302.7L405.3,296.6L415.6,291.0L424.3,284.3L430.6,277.2L426.9,273.5L424.3,267.5L430.8,261.1L429.4,257.0L437.9,255.2L435.8,253.2L436.7,252.0L435.3,249.3L440.8,249.3L441.9,239.8L459.8,243.8L465.8,242.1L466.7,238.2L473.9,237.8L482.1,228.9L485.2,227.9L487.8,221.2L492.3,216.8L497.2,214.3L505.2,203.8L509.4,211.4L512.3,212.5L514.0,217.7L517.5,222.4L519.0,231.2L529.1,232.3L537.6,242.4L542.1,244.9L548.1,244.9L551.5,248.8L554.6,250.4L563.0,247.8L564.3,244.8L578.8,242.7L581.9,232.6L581.7,223.5L587.0,224.5L588.2,228.2L592.7,231.4L608.0,229.1L607.7,231.2L608.7,231.7L615.3,231.5L615.3,236.1L617.2,237.6L616.6,239.3L619.0,240.2L619.2,243.7L618.1,243.7L619.3,247.0L616.7,247.9L615.6,261.0L612.9,262.1L615.9,267.6L615.2,272.2L619.6,280.8L615.9,281.6L613.2,284.2L611.5,284.3L609.8,290.9L606.5,290.0L601.8,286.0L600.0,295.4L600.9,319.7L599.4,327.5L600.5,333.8L600.4,345.3Z", "KZ-61": "M500.4,345.6L546.0,345.6L550.8,353.9L558.7,383.2L560.1,385.6L564.3,411.8L561.4,416.6L562.1,418.1L560.8,426.1L554.9,438.1L557.5,438.8L557.2,442.5L559.5,442.7L559.7,444.6L562.0,444.3L564.2,445.4L565.4,444.1L566.5,446.0L568.5,446.2L571.5,450.9L572.1,450.3L572.8,451.7L572.0,452.6L573.3,453.4L574.5,458.0L573.4,458.8L573.2,460.4L574.1,461.0L573.5,462.7L580.9,467.9L584.6,473.3L587.1,473.4L590.0,480.1L591.2,480.1L589.8,482.0L586.3,483.0L583.9,489.1L582.0,488.8L581.6,486.9L580.0,485.7L576.5,487.9L576.6,490.5L574.0,492.0L572.7,494.8L569.7,497.5L568.5,496.6L566.5,499.9L564.6,499.7L559.3,501.7L557.7,505.1L556.5,505.9L555.1,505.3L554.0,507.3L555.3,509.0L548.9,509.3L548.2,511.7L544.9,512.8L545.1,517.5L544.4,517.0L537.8,523.7L538.6,525.4L537.9,526.7L535.8,527.7L536.4,525.9L534.9,524.5L533.0,524.8L532.3,526.6L534.3,528.3L534.4,536.1L536.1,537.1L535.3,538.9L536.3,540.0L534.3,541.1L531.9,541.0L529.3,539.4L519.8,531.7L519.7,530.6L522.6,527.9L521.7,525.3L523.4,524.2L522.3,522.7L520.9,524.9L519.9,524.7L519.5,520.2L517.1,520.7L513.9,519.0L505.0,521.0L489.2,520.5L485.0,494.0L472.1,491.9L472.2,476.6L475.7,478.0L501.6,455.4L517.3,446.0L515.2,445.5L516.3,444.5L514.7,443.7L515.9,443.0L515.3,441.7L513.3,440.4L512.5,442.4L511.9,440.1L513.7,438.9L513.9,436.3L515.8,433.3L516.1,426.8L518.4,428.3L519.6,427.1L518.4,421.7L521.8,416.6L515.7,411.6L513.9,407.8L511.4,406.4L510.3,407.0L507.4,404.4L508.5,402.0L508.9,394.2L508.7,376.3L500.3,370.7L500.3,369.0L502.2,367.0L503.3,356.9L505.0,354.3L503.6,351.0L500.5,348.0L500.4,345.6Z", "KZ-79": "M556.4,472.3L561.6,473.8L561.4,474.7L566.9,479.3L563.7,480.6L564.2,482.7L563.3,481.9L562.7,482.7L562.7,481.3L561.5,481.4L560.1,484.1L557.4,485.7L553.9,481.7L552.5,481.3L553.3,480.6L552.9,478.6L551.7,478.0L551.7,476.5L553.6,475.8L556.4,472.3Z", "KZ-55": "M793.7,140.1L791.4,140.4L790.2,143.3L786.8,144.5L787.7,146.7L784.9,149.4L781.5,149.3L781.1,147.8L777.4,147.9L779.0,148.8L780.1,154.8L778.0,154.4L773.6,157.3L770.6,157.7L769.4,156.8L768.1,158.4L762.9,160.5L763.1,162.7L765.7,165.0L767.7,169.7L772.3,171.5L772.2,175.1L773.8,177.1L778.5,176.3L778.2,184.6L780.0,185.4L781.0,190.0L776.0,198.4L773.3,200.0L771.2,200.2L764.1,198.0L756.5,194.7L755.3,193.1L753.9,193.6L751.6,191.6L752.7,184.9L748.0,181.8L743.2,181.2L739.0,177.6L733.4,178.6L731.9,180.3L728.7,191.8L725.7,189.7L720.7,189.8L718.2,193.9L715.6,192.3L709.4,194.3L705.9,193.2L704.4,194.8L696.9,195.4L689.2,200.8L685.2,200.1L684.2,197.8L687.4,195.0L691.7,193.7L692.3,192.4L688.3,189.7L686.9,184.8L685.8,185.2L683.1,182.0L681.9,184.3L680.4,184.8L679.3,183.0L680.0,179.7L675.7,177.7L671.8,179.4L665.4,179.6L662.3,177.7L662.0,176.5L663.5,174.6L662.9,173.5L664.7,171.6L666.5,171.4L666.0,168.9L667.1,167.6L664.6,167.3L666.0,162.1L664.8,159.5L665.6,158.3L656.9,155.6L657.6,153.4L660.4,151.4L660.3,149.8L664.5,147.6L671.1,146.8L670.9,145.4L665.7,144.0L665.0,142.5L659.5,143.0L660.2,136.7L664.1,133.5L665.5,133.5L664.9,110.0L663.0,110.0L663.0,107.0L658.7,107.0L656.9,104.7L658.4,104.0L661.3,106.1L663.0,106.1L662.9,102.2L664.5,102.2L664.5,99.7L665.7,99.6L664.6,96.1L661.4,97.2L659.2,100.5L657.3,100.9L655.9,100.3L655.0,97.8L656.8,96.0L655.5,94.2L652.9,95.8L659.5,87.6L656.5,86.1L651.1,89.0L651.1,83.1L653.8,84.2L655.0,83.5L651.3,77.9L655.1,73.5L656.3,73.7L656.8,71.5L660.5,72.8L662.5,70.2L666.6,70.9L666.1,73.2L668.4,73.6L668.7,71.9L670.7,72.4L671.9,75.9L674.1,77.2L676.6,73.0L675.0,72.2L675.9,68.7L680.1,69.6L680.9,66.4L683.1,66.8L683.8,63.8L688.5,64.0L690.1,65.1L699.6,58.6L698.0,55.1L701.7,53.5L703.3,54.0L717.9,48.2L718.5,47.7L717.5,46.7L719.2,44.7L724.5,46.1L728.6,45.5L730.6,42.6L735.4,41.1L736.0,42.6L731.8,44.0L733.7,44.6L734.2,46.7L731.2,51.8L728.6,53.1L727.9,51.8L723.6,51.6L725.2,56.5L759.0,83.1L789.8,132.4L793.7,140.1Z", "KZ-59": "M651.3,77.9L655.0,83.5L653.8,84.2L651.1,83.1L651.1,89.0L656.5,86.1L659.5,87.6L653.1,95.2L655.5,94.2L656.8,96.0L655.0,97.8L655.9,100.3L659.2,100.5L661.4,97.2L664.6,96.1L665.7,99.6L664.5,99.7L664.5,102.2L662.9,102.2L663.0,106.1L661.3,106.1L658.4,104.0L656.9,104.7L658.7,107.0L663.0,107.0L663.0,108.3L653.5,107.9L652.6,105.6L651.0,106.1L650.2,104.4L642.3,102.6L638.6,103.9L639.1,96.4L637.6,92.6L627.5,94.4L621.6,93.1L621.6,97.5L614.6,98.8L611.2,96.7L611.3,94.2L608.7,95.6L607.2,92.1L609.9,90.9L609.4,88.8L610.4,86.0L606.4,78.4L598.6,82.7L592.9,81.7L594.1,78.4L582.6,78.1L582.6,81.6L579.3,82.0L579.5,85.2L577.2,85.6L576.2,85.4L574.1,80.4L568.4,80.6L568.7,78.5L570.2,78.0L570.3,75.3L564.6,74.9L563.7,69.5L557.5,69.1L557.5,70.2L553.5,72.1L554.5,74.6L551.8,75.3L551.8,73.5L550.2,73.1L550.2,72.1L547.7,72.1L547.7,69.2L545.1,69.2L545.1,71.5L537.9,70.5L538.7,73.7L536.0,73.7L536.0,75.4L531.9,77.0L534.3,83.8L537.3,84.0L537.1,86.1L538.4,86.6L538.2,89.1L537.2,89.5L539.2,90.3L535.3,94.7L536.6,101.0L530.0,103.8L528.5,107.8L524.2,108.2L523.7,110.0L520.1,110.0L520.2,112.2L521.5,113.0L519.9,116.8L518.2,116.0L516.9,119.7L513.9,117.1L510.6,116.2L509.2,114.2L503.4,114.2L503.4,122.1L498.6,120.3L494.1,120.8L491.0,119.5L485.2,119.5L485.2,116.3L484.0,116.1L477.9,117.6L474.0,113.3L472.3,114.0L472.6,102.2L475.2,102.1L475.0,97.4L479.6,97.7L479.9,94.7L473.8,94.3L473.4,91.4L477.0,89.6L481.8,90.4L481.8,88.0L478.3,86.6L478.1,75.5L474.8,75.5L476.5,64.6L473.3,64.7L472.7,60.0L471.2,57.6L475.7,54.9L479.8,53.9L478.6,51.0L476.7,51.0L472.9,48.5L476.4,47.0L474.2,42.5L474.0,34.5L491.0,29.9L497.3,29.6L498.7,28.3L503.0,27.9L504.2,26.2L509.8,27.2L512.9,26.5L514.9,25.7L516.0,22.6L518.2,22.2L521.1,23.4L526.0,22.7L525.1,22.0L526.0,19.7L527.9,18.8L524.9,16.1L525.6,16.0L524.6,14.4L528.8,15.1L529.0,14.2L534.6,13.7L535.2,14.5L536.2,13.1L535.6,12.0L537.1,11.2L538.4,8.0L543.3,9.8L544.4,11.2L544.0,8.4L542.4,8.4L542.8,5.7L548.3,7.5L549.2,9.7L553.2,7.7L555.0,9.3L562.4,9.2L565.2,10.8L567.3,14.0L569.9,14.1L573.4,16.3L578.2,13.8L579.6,11.3L583.4,12.5L585.2,11.2L587.9,11.1L590.7,16.9L593.0,18.5L591.5,25.6L593.0,26.9L593.3,29.6L594.9,32.4L599.6,33.6L599.6,35.8L597.8,35.6L596.6,37.4L596.7,41.0L598.1,43.0L597.4,46.4L592.5,45.5L592.5,47.7L594.3,47.7L593.9,50.7L595.3,50.8L595.5,52.9L596.9,54.2L599.7,50.9L604.4,51.9L604.3,54.0L609.9,53.8L611.0,52.3L610.1,50.9L610.7,48.5L615.4,48.8L621.1,53.3L621.9,51.1L618.7,49.7L619.9,46.6L617.7,45.8L617.5,44.4L621.3,44.7L623.4,46.2L623.7,48.6L624.8,48.7L623.9,50.9L628.9,52.6L629.0,53.8L627.3,53.3L625.6,54.6L627.2,55.9L625.6,59.6L628.4,61.2L629.8,58.3L633.9,59.4L633.0,56.0L629.5,56.0L631.3,52.7L640.6,54.1L640.2,55.8L642.2,56.1L642.4,58.1L647.4,59.7L650.5,59.6L650.5,58.4L653.3,59.7L653.3,57.5L655.4,57.3L656.6,55.9L655.9,55.1L659.3,55.7L657.4,62.8L651.7,62.1L651.6,64.5L649.0,65.2L648.5,69.3L646.9,69.3L646.5,73.2L650.3,74.8L649.5,76.8L651.3,77.9Z", "KZ-47": "M222.3,330.6L226.9,331.2L227.9,334.7L227.3,336.6L230.2,336.3L230.8,338.0L232.3,338.0L234.2,340.0L242.5,340.8L243.7,342.1L245.8,348.3L249.2,375.2L231.2,381.6L231.2,514.0L228.3,513.7L226.7,515.6L225.1,514.7L222.5,515.4L221.7,516.7L220.8,515.0L219.2,516.5L217.2,515.0L206.3,496.4L206.0,493.0L201.9,487.7L188.3,476.0L172.7,479.2L158.6,485.2L145.6,498.2L146.8,491.7L145.5,488.8L145.4,484.4L148.8,478.4L151.3,469.8L148.2,463.2L148.9,462.9L151.8,469.0L153.0,467.1L152.7,463.2L150.1,462.7L149.7,460.7L146.3,459.5L143.1,459.9L141.9,461.4L139.3,458.1L132.6,459.6L129.2,452.4L126.6,449.8L126.6,447.0L117.3,448.1L118.5,439.5L117.5,433.9L114.2,430.2L111.4,424.4L110.7,419.9L107.8,416.8L107.0,410.5L104.7,408.5L96.3,406.8L93.2,404.8L92.1,396.5L93.1,398.0L94.2,394.3L104.7,395.8L106.5,394.7L111.0,397.5L110.9,398.9L113.2,400.5L115.6,400.5L117.7,398.0L119.6,397.8L120.8,399.4L121.6,398.4L124.4,399.2L121.1,396.2L117.3,396.5L115.6,390.9L111.0,387.1L110.5,384.6L114.9,380.2L116.5,380.1L116.5,382.3L117.1,374.5L120.2,370.6L128.3,367.1L132.8,366.6L138.3,368.4L145.4,368.0L162.3,374.4L165.6,373.6L172.3,370.6L169.3,368.8L167.3,369.0L165.3,366.3L161.4,365.7L160.0,361.1L160.7,358.9L158.9,357.9L160.6,355.3L157.6,354.2L162.7,354.6L163.5,352.2L166.5,352.6L174.8,349.0L177.7,346.0L175.2,345.7L175.5,344.9L180.6,341.0L182.4,336.7L190.5,336.3L203.1,332.5L213.7,332.4L218.9,326.9L222.3,330.6Z", "KZ-43": "M398.7,302.7L409.7,305.5L408.8,307.3L404.9,308.5L407.2,310.6L412.1,312.2L417.7,315.7L420.3,315.5L434.7,320.8L446.6,327.5L451.4,328.4L457.0,334.4L462.2,337.9L481.5,339.8L493.9,339.4L500.0,340.7L500.2,347.2L505.0,354.3L503.3,356.9L502.2,367.0L500.3,369.0L500.3,370.7L508.7,376.3L508.9,394.2L508.5,402.0L507.4,404.4L510.3,407.0L511.4,406.4L513.9,407.8L515.7,411.6L521.8,416.6L518.4,421.7L519.6,427.1L518.4,428.3L516.1,426.8L515.8,433.3L513.9,436.3L513.7,438.9L511.9,440.1L512.5,442.4L513.3,440.4L515.3,441.7L515.9,443.0L514.7,443.7L516.3,444.5L515.2,445.5L517.3,445.8L501.6,455.4L475.7,478.0L473.8,477.4L474.5,455.8L468.4,458.7L461.5,443.2L452.5,435.8L448.1,427.8L446.4,427.1L436.8,433.1L408.3,430.2L375.9,435.4L355.0,409.5L354.3,404.6L341.7,394.5L305.9,370.0L304.3,345.3L317.0,327.6L330.7,313.4L339.0,312.8L339.5,305.2L349.9,305.6L360.2,280.2L374.0,279.8L377.6,283.6L380.9,290.0L383.8,290.5L390.4,297.8L389.8,300.9L396.5,301.9L397.2,303.2L398.7,302.7Z", "KZ-39": "M474.0,34.5L474.2,42.5L476.4,47.0L472.9,48.5L476.7,51.0L478.6,51.0L479.8,53.9L475.7,54.9L471.2,57.6L472.7,60.0L473.3,64.7L476.5,64.6L474.8,75.5L478.1,75.5L478.3,86.6L481.8,88.0L481.8,90.4L477.0,89.6L473.4,91.4L473.8,94.3L479.9,94.7L479.6,97.7L475.0,97.4L475.2,102.1L472.6,102.2L472.1,122.2L469.0,124.5L466.4,134.2L460.5,137.0L456.5,137.0L457.3,140.9L460.6,141.0L462.0,143.0L459.2,149.8L461.2,151.1L457.4,153.8L459.7,156.8L458.3,158.3L463.3,162.6L462.0,169.3L462.6,171.7L467.1,170.8L468.8,166.9L470.9,167.1L474.3,170.2L474.8,172.9L477.9,171.8L479.7,176.9L482.6,176.0L489.6,179.6L496.0,177.9L498.9,179.2L497.8,182.5L499.4,187.8L509.8,183.9L515.1,184.1L518.8,181.7L520.5,182.2L520.1,183.1L522.5,185.7L519.5,190.2L510.7,193.6L510.1,195.7L511.6,197.3L505.8,204.6L505.2,203.8L497.2,214.3L492.3,216.8L487.8,221.2L485.2,227.9L482.1,228.9L473.9,237.8L466.7,238.2L465.8,242.1L459.8,243.8L441.9,239.8L440.8,249.3L435.3,249.3L436.7,252.0L435.8,253.2L437.9,255.2L429.4,257.0L430.8,261.1L424.3,267.5L418.4,257.3L409.9,251.9L401.8,249.0L401.1,246.3L403.0,242.5L400.4,240.1L396.1,243.0L389.0,236.9L386.5,230.5L384.5,230.4L384.8,229.1L389.0,228.5L383.1,219.7L384.6,216.8L387.2,217.4L386.3,213.0L389.2,211.1L390.2,206.6L391.6,204.9L394.8,203.9L398.1,205.9L398.7,201.8L395.6,195.7L393.6,194.0L391.3,188.0L388.0,184.4L388.5,183.0L386.4,176.8L382.2,178.5L381.3,177.3L382.4,175.6L381.1,172.3L382.4,172.7L383.3,171.3L386.1,170.9L381.3,166.4L380.8,165.1L382.6,162.7L378.9,160.6L377.5,163.0L375.7,162.4L372.2,154.2L370.7,155.9L368.3,156.4L364.9,154.0L363.8,150.9L351.7,148.8L349.5,145.8L350.1,143.4L340.6,143.4L337.6,142.3L336.2,140.7L340.1,136.9L337.9,136.9L331.1,133.0L331.4,134.7L329.0,134.3L327.7,129.8L332.4,129.9L339.9,124.0L344.9,124.0L346.4,121.4L350.4,120.0L353.3,117.1L351.5,114.4L351.3,111.3L347.9,110.8L347.9,106.5L345.9,107.0L344.8,105.7L344.8,102.1L347.7,101.7L348.6,99.6L353.5,96.4L351.9,94.4L354.4,94.7L357.7,92.3L359.1,93.7L361.1,93.9L363.0,92.3L366.9,95.3L368.6,93.7L372.1,93.5L374.8,95.4L378.9,94.0L378.7,89.6L370.6,87.0L367.9,84.0L366.9,85.6L364.4,85.8L361.3,83.7L356.0,82.4L355.4,79.0L357.9,75.3L359.4,74.9L362.0,77.2L364.2,76.6L366.0,74.7L365.0,72.2L361.1,71.9L360.1,73.5L356.9,73.3L354.6,71.5L349.3,71.0L349.2,69.6L352.7,70.1L353.1,67.6L354.5,67.6L357.2,65.0L357.4,63.3L355.0,61.0L351.5,60.9L351.6,59.9L354.1,58.5L356.0,58.6L356.6,60.5L358.4,60.2L357.6,56.6L358.8,54.9L363.3,54.6L363.3,56.5L365.4,57.3L365.4,58.8L367.6,56.5L369.2,56.5L370.5,58.2L372.2,56.5L373.2,57.3L372.3,58.9L374.2,59.4L376.8,59.5L376.1,56.2L385.9,55.9L387.7,56.4L385.3,57.5L386.5,60.2L388.2,60.7L390.2,58.0L389.6,55.5L391.7,54.3L396.9,53.3L401.8,53.8L403.5,53.2L404.0,50.6L409.6,50.8L419.0,47.8L421.8,50.5L423.4,50.3L424.5,49.3L423.6,46.8L424.7,47.4L425.7,46.2L434.1,45.8L438.8,43.3L441.8,44.9L447.4,42.3L450.6,45.6L453.4,45.6L454.4,44.6L452.9,41.3L453.2,38.1L456.7,36.8L460.2,37.0L459.0,35.1L459.8,34.0L466.1,35.7L468.4,32.5L471.7,31.8L471.3,34.6L474.0,34.5Z", "KZ-33": "M864.3,362.3L870.6,366.4L871.7,369.2L871.6,373.7L869.0,375.2L864.3,372.9L860.2,374.3L858.6,372.4L855.7,373.4L852.1,367.7L848.4,368.9L844.4,372.2L843.6,371.4L842.5,372.5L839.0,372.7L837.2,374.2L836.0,373.6L835.2,375.4L832.4,375.6L831.0,377.1L826.5,375.5L826.2,376.8L823.9,377.8L821.2,377.0L818.6,380.2L817.0,379.1L814.5,380.8L811.5,379.9L806.5,384.8L808.5,385.9L808.0,387.0L809.4,389.1L813.4,387.3L814.0,390.6L817.5,392.8L819.3,395.6L817.7,400.3L819.1,407.1L818.9,413.6L821.9,422.7L821.1,425.4L819.6,424.7L815.8,426.3L814.1,426.2L813.6,424.6L811.5,425.5L809.6,424.2L809.3,425.1L808.5,424.1L807.3,424.8L807.6,423.9L804.1,422.4L802.6,420.1L798.9,418.4L788.7,423.7L785.2,422.8L776.4,423.9L766.8,421.3L762.7,422.5L759.5,421.9L757.6,423.0L757.1,420.6L755.9,420.4L757.3,417.1L754.6,415.1L751.9,416.3L750.8,414.3L745.6,411.9L746.2,405.4L742.2,405.2L741.4,401.6L735.5,397.0L733.4,390.4L733.2,387.1L734.2,385.9L732.8,383.1L730.6,380.6L726.7,380.3L724.7,371.0L719.4,365.3L717.2,357.0L717.4,329.3L718.7,328.4L718.5,322.6L721.9,320.7L722.1,323.2L723.5,322.4L726.0,324.2L725.7,322.5L727.6,321.6L735.5,326.2L733.1,321.2L735.7,323.4L737.2,322.3L738.9,323.2L739.7,325.9L743.5,326.1L745.3,323.5L750.5,323.2L748.3,303.8L751.8,302.1L758.0,303.5L761.5,299.4L764.6,302.7L768.5,297.7L776.7,304.5L779.7,304.8L780.9,307.9L791.6,306.7L799.2,317.5L809.6,312.7L814.0,314.4L815.1,317.4L830.2,325.3L836.9,325.4L839.6,328.0L840.9,327.1L841.6,329.3L844.1,326.6L843.1,330.0L844.9,327.8L847.0,328.1L848.0,326.9L845.8,330.6L846.4,332.4L854.8,341.9L857.0,349.9L860.6,354.2L860.5,358.3L864.3,362.3Z", "KZ-31": "M666.3,345.6L662.5,354.7L665.6,371.2L658.9,371.2L658.2,373.7L658.9,377.8L667.0,377.0L668.1,384.7L674.5,388.8L677.4,392.4L677.4,400.1L682.9,404.7L688.9,405.8L696.3,412.3L695.4,423.9L688.9,430.2L688.9,431.6L693.4,434.0L693.3,432.3L694.7,432.3L694.8,434.3L698.3,434.3L699.0,436.6L696.0,440.1L695.7,444.1L696.9,444.5L696.0,445.9L697.4,448.3L704.6,451.8L702.1,454.3L707.6,454.6L707.6,455.7L708.8,455.7L707.3,459.6L706.1,460.9L694.3,458.8L685.4,453.6L682.9,454.0L678.8,448.8L669.8,444.0L669.9,446.5L665.9,447.4L664.1,445.6L662.7,449.1L660.7,449.1L653.9,453.0L651.2,469.8L653.3,473.6L652.5,474.6L648.7,473.6L648.2,471.0L643.7,469.7L638.6,470.3L631.3,465.1L628.7,464.9L623.5,462.3L619.6,463.1L613.4,459.6L607.7,462.1L605.4,460.7L602.1,460.9L601.5,462.2L598.9,461.8L596.5,468.3L592.7,468.4L594.5,472.5L592.1,471.7L591.5,475.2L588.8,477.9L587.1,473.4L584.6,473.3L580.9,467.9L573.5,462.7L574.1,461.0L573.2,460.4L573.4,458.8L574.5,458.0L573.3,453.4L572.0,452.6L572.8,451.7L572.1,450.3L571.5,450.9L568.5,446.2L566.5,446.0L565.4,444.1L564.2,445.4L562.0,444.3L559.7,444.6L559.5,442.7L557.2,442.5L557.5,438.8L554.9,438.1L560.8,426.1L562.1,418.1L561.4,416.6L564.3,411.8L560.1,385.6L558.7,383.2L550.8,353.9L546.0,345.6L666.3,345.6Z", "KZ-63": "M886.4,301.8L889.3,295.4L882.3,288.2L884.5,276.6L890.6,273.2L892.0,265.2L896.5,259.5L892.2,256.7L891.8,254.1L887.3,253.4L883.3,245.7L884.4,239.9L879.7,238.9L877.2,240.4L874.8,233.8L876.9,230.6L876.7,229.4L874.2,229.0L872.9,230.0L870.2,225.8L867.3,225.4L866.6,226.9L863.2,223.1L861.8,224.1L859.7,222.9L858.1,221.1L859.0,219.6L857.0,217.4L852.4,215.4L852.6,214.1L850.7,212.9L851.4,210.9L850.1,209.4L851.1,208.9L850.5,206.3L841.3,202.9L842.4,197.3L837.0,195.2L836.8,193.8L839.1,192.6L843.2,193.2L841.5,190.2L844.9,189.9L848.6,191.9L849.7,190.6L850.0,187.2L850.9,187.2L849.4,186.1L851.1,183.4L848.6,180.8L849.5,180.6L849.5,178.3L847.6,176.2L847.7,174.8L851.0,174.2L852.2,172.0L852.7,173.8L854.8,172.6L861.7,175.3L866.2,173.4L871.2,174.7L875.4,171.0L875.2,168.2L881.2,169.8L884.4,166.8L884.6,165.2L891.5,165.1L893.9,167.4L897.3,167.2L898.6,169.3L901.5,169.8L905.1,173.0L904.9,175.4L911.7,183.0L910.6,184.7L912.2,188.9L911.8,191.2L914.5,194.2L916.7,192.7L919.4,194.5L920.9,194.0L924.0,196.7L925.6,196.5L926.2,198.2L928.5,198.1L930.7,199.7L931.0,201.2L929.3,202.5L929.5,205.0L931.3,205.7L934.7,210.8L934.9,215.0L936.2,215.3L936.0,216.4L939.2,214.7L941.6,216.1L944.0,215.5L946.2,217.8L948.1,216.8L949.7,218.0L952.6,217.4L953.2,220.1L956.6,218.7L958.8,220.8L960.5,216.6L964.0,215.7L968.4,210.8L968.1,208.5L970.5,208.4L972.8,209.0L972.7,212.5L968.7,215.0L968.8,217.1L973.8,218.0L974.0,221.3L976.7,222.9L976.2,225.0L978.7,228.5L985.6,229.3L984.9,233.4L981.4,232.1L975.5,232.7L973.9,235.8L972.0,237.1L971.6,240.4L973.6,243.6L972.1,245.2L972.5,247.7L969.2,251.0L968.0,254.1L963.7,256.4L961.2,255.9L959.5,258.0L948.8,258.6L947.1,260.5L943.2,268.6L942.5,272.7L944.5,291.4L946.8,295.9L946.3,301.4L943.0,305.8L942.7,307.8L935.0,307.7L934.1,309.9L931.4,312.3L929.4,312.7L928.5,314.5L924.0,309.4L918.0,310.5L916.2,309.3L910.6,309.5L908.7,310.8L905.4,309.8L903.5,310.5L895.3,307.6L892.7,304.8L891.6,305.4L890.4,303.2L887.5,303.2L886.4,301.8Z", "KZ-23": "M159.5,330.3L157.8,332.2L159.2,329.5L159.5,330.3ZM148.6,315.6L149.2,317.0L148.4,317.6L147.6,317.1L148.6,315.6ZM206.1,267.6L205.7,270.1L209.6,275.2L210.1,281.6L207.2,302.3L212.8,314.1L218.0,319.5L224.9,323.0L238.2,327.1L238.9,332.1L241.9,336.9L242.5,340.8L236.0,340.6L232.3,338.0L230.8,338.0L230.2,336.3L227.3,336.6L227.9,334.7L226.9,331.2L221.7,330.5L218.9,326.9L213.7,332.4L203.1,332.5L190.5,336.3L182.4,336.7L180.6,341.0L175.5,344.9L175.2,345.7L177.7,346.0L174.8,349.0L166.5,352.6L163.5,352.2L162.7,354.6L155.2,353.7L156.6,349.5L158.7,348.2L157.1,347.6L157.2,345.2L154.9,343.3L155.7,342.4L154.8,341.2L157.0,340.4L156.2,338.6L157.7,337.3L158.6,333.0L160.1,331.3L162.1,331.1L159.4,328.3L161.1,321.5L159.8,318.8L156.3,318.4L154.2,319.6L153.4,321.7L151.2,317.4L149.7,316.8L151.1,314.8L150.4,312.3L148.3,311.5L148.9,313.9L146.3,314.6L146.4,315.9L144.6,317.2L143.7,315.2L143.0,318.2L141.9,318.7L138.2,317.4L137.4,318.0L131.8,315.3L127.2,314.9L126.2,313.6L125.7,314.9L125.4,314.1L123.6,315.7L124.3,313.8L125.4,313.8L124.5,313.6L125.6,313.4L125.4,312.4L124.3,312.9L124.8,311.9L121.1,310.1L114.8,310.5L112.8,312.5L106.1,311.6L104.0,314.9L103.1,312.6L100.5,316.9L98.8,316.6L97.8,314.6L96.3,317.8L94.7,316.8L92.4,320.5L91.8,318.0L87.6,323.2L87.7,324.3L85.0,324.9L83.2,328.3L83.9,330.0L83.0,329.1L82.2,329.8L83.0,332.4L80.3,331.9L83.6,334.5L82.6,338.5L81.0,337.7L80.6,334.2L79.0,332.3L78.1,332.2L78.2,334.3L80.3,337.5L78.6,337.3L74.2,333.3L72.8,333.5L75.2,335.9L73.4,334.7L75.2,337.1L76.9,336.8L76.4,338.6L75.4,338.6L70.3,334.1L70.9,336.2L69.0,335.0L67.0,332.0L58.5,328.3L57.4,326.1L51.7,325.4L53.3,323.9L50.1,321.5L51.9,320.8L51.4,320.2L54.1,319.3L56.6,320.9L60.7,320.6L62.5,318.8L55.6,306.2L51.1,294.8L49.4,294.8L43.6,284.7L39.2,282.1L30.2,282.3L24.5,279.4L23.7,285.1L19.1,282.2L17.4,279.7L18.8,278.9L15.7,273.7L19.5,270.6L16.6,269.9L17.1,265.2L38.6,267.1L59.8,270.5L73.4,275.3L72.7,271.8L85.8,270.4L92.2,263.5L108.8,254.0L110.6,252.5L111.8,248.8L117.1,247.7L124.3,247.5L130.2,249.0L129.3,252.8L136.3,253.8L138.6,252.8L144.1,255.8L148.3,255.1L147.8,252.3L149.7,246.0L152.1,246.2L151.9,237.7L153.7,238.3L154.8,235.9L165.3,237.0L167.8,236.2L169.2,235.4L168.3,234.0L174.2,228.9L180.2,234.1L181.0,231.7L182.9,231.4L183.7,246.1L194.2,250.5L196.1,250.6L197.0,245.5L198.4,245.9L198.9,244.8L201.2,246.9L205.1,248.1L205.5,253.4L204.3,260.4L206.4,263.9L206.1,267.6Z", "KZ-71": "M609.3,153.0L608.8,154.5L608.0,153.7L609.3,153.0ZM602.1,155.7L604.6,155.2L603.9,156.1L605.9,156.8L606.9,155.6L606.6,158.3L610.4,161.8L607.4,162.0L605.6,163.9L605.8,168.1L603.9,167.8L603.5,165.6L599.5,164.8L597.8,161.6L599.4,159.1L598.4,158.3L598.9,156.7L599.8,157.2L601.1,154.9L602.1,155.7Z", "KZ-19": "M718.5,322.6L718.7,328.4L717.4,329.3L717.4,359.2L719.4,365.3L724.7,371.0L726.7,380.3L730.6,380.6L734.2,385.9L733.2,387.1L733.4,390.4L735.5,397.0L741.4,401.6L742.2,405.2L746.2,405.4L745.6,411.9L750.8,414.3L751.9,416.3L754.6,415.1L757.3,417.1L755.9,420.4L757.1,420.6L757.6,423.0L759.5,421.9L762.7,422.5L766.8,421.3L776.4,423.9L785.2,422.8L788.7,423.7L798.9,418.4L802.6,420.1L804.1,422.4L807.6,423.9L807.3,424.8L808.5,424.1L809.3,425.1L809.6,424.2L811.5,425.5L813.6,424.6L814.1,426.2L815.8,426.3L819.6,424.7L821.1,425.4L822.0,424.0L827.5,436.7L825.8,441.8L828.1,442.4L828.8,447.2L828.2,448.6L823.6,448.6L818.6,451.9L818.9,453.8L823.8,457.5L819.2,459.7L815.6,459.8L814.9,464.5L813.3,466.8L815.9,471.2L814.3,474.2L816.2,478.1L815.9,481.4L813.6,482.0L812.7,479.1L808.9,476.0L808.5,473.9L802.1,472.3L797.5,473.0L793.9,468.2L790.2,465.5L789.4,463.4L790.1,460.6L786.1,462.2L777.2,460.3L773.0,457.2L770.1,457.7L769.6,458.8L766.0,457.8L760.4,459.0L756.0,456.7L751.1,456.6L750.4,455.7L745.6,457.3L742.7,456.8L740.8,454.6L738.7,454.4L737.9,455.5L736.4,454.1L735.1,454.8L733.2,454.2L730.1,457.0L725.6,456.4L724.6,457.8L721.3,458.6L720.3,456.8L717.7,456.1L713.7,456.8L711.5,455.2L707.9,455.8L707.6,454.6L702.1,454.3L704.6,451.8L697.2,448.2L695.6,442.2L696.0,440.1L699.0,436.6L698.3,434.3L694.8,434.3L694.7,432.3L693.3,432.3L693.4,434.0L688.9,431.6L688.9,430.2L695.4,423.9L696.3,412.3L688.9,405.8L682.9,404.7L677.4,400.1L677.4,392.4L674.5,388.8L668.1,384.7L667.0,377.0L658.9,377.8L658.2,373.7L658.9,371.2L665.6,371.2L662.5,354.7L666.8,344.1L668.8,340.6L682.8,326.6L689.4,325.5L696.8,321.0L701.5,320.1L714.2,319.0L718.5,322.6Z", "KZ-75": "M736.7,439.2L737.4,440.6L739.5,439.8L737.9,441.1L737.2,444.2L739.5,447.3L740.0,446.3L740.6,446.8L739.9,448.1L738.6,447.8L740.0,449.4L739.0,449.5L739.0,452.4L735.8,452.4L736.2,450.8L731.7,447.8L732.3,443.4L730.8,442.3L732.6,440.8L734.2,441.8L736.7,439.2Z", "KZ-11": "M663.0,108.3L663.0,110.0L664.9,110.0L665.5,133.5L664.1,133.5L660.2,136.7L659.5,143.0L665.0,142.5L665.7,144.0L670.9,145.4L671.1,146.8L664.5,147.6L660.3,149.8L660.4,151.4L657.6,153.4L656.9,155.6L652.2,154.4L651.1,156.4L650.2,154.7L648.2,155.7L646.1,154.6L644.5,155.6L645.5,157.8L646.7,157.3L648.5,161.2L651.3,159.2L654.7,161.2L650.3,164.7L644.9,165.8L644.8,168.4L640.3,170.6L635.8,169.7L632.6,174.6L629.3,175.2L629.2,176.0L628.3,175.0L626.3,177.2L628.2,179.7L627.4,181.3L623.1,180.2L620.8,182.2L621.6,185.2L619.5,185.6L619.6,186.9L617.0,184.8L612.1,184.9L611.8,186.3L609.7,186.2L612.2,180.4L610.9,179.0L612.7,177.0L610.3,174.4L608.4,174.4L608.3,173.2L605.3,173.0L600.7,175.6L600.6,178.1L598.1,178.1L597.7,179.8L595.7,179.7L594.0,181.6L594.1,183.3L587.0,185.7L586.1,193.3L584.1,191.1L580.2,193.0L581.2,196.8L573.9,199.9L571.4,199.8L572.7,194.4L570.5,194.3L570.2,192.4L558.9,194.5L558.9,191.4L556.9,191.0L555.2,188.0L554.6,189.6L553.4,187.6L550.8,188.7L550.3,190.8L551.5,190.7L551.7,192.7L548.8,192.2L548.1,195.2L543.6,195.3L536.5,192.8L537.9,190.7L538.4,183.2L539.4,181.4L539.6,172.8L532.7,172.7L523.8,179.3L521.4,177.8L517.7,178.0L518.8,181.7L516.4,183.6L509.8,183.9L499.4,187.8L497.8,182.5L498.9,179.2L496.0,177.9L489.6,179.6L482.6,176.0L479.7,176.9L477.9,171.8L474.8,172.9L474.3,170.2L470.9,167.1L468.8,166.9L467.1,170.8L462.6,171.7L462.0,169.3L463.3,162.6L458.3,158.3L459.7,156.8L457.4,153.8L461.2,151.1L459.2,149.8L462.0,143.0L460.6,141.0L457.3,140.9L456.5,137.0L460.5,137.0L466.4,134.2L469.0,124.5L472.1,122.2L472.3,114.0L474.0,113.3L477.9,117.6L484.0,116.1L485.2,116.3L485.2,119.5L491.0,119.5L494.1,120.8L498.6,120.3L503.4,122.1L503.4,114.2L509.2,114.2L510.6,116.2L513.9,117.1L516.9,119.7L518.2,116.0L519.9,116.8L521.5,113.0L520.2,112.2L520.1,110.0L523.7,110.0L524.2,108.2L528.5,107.8L530.0,103.8L536.6,101.0L535.3,94.7L539.2,90.3L537.2,89.5L538.2,89.1L538.4,86.6L537.1,86.1L537.3,84.0L534.3,83.8L531.9,77.0L536.0,75.4L536.0,73.7L538.7,73.7L537.9,70.5L545.1,71.5L545.1,69.2L547.7,69.2L547.7,72.1L550.2,72.1L550.2,73.1L551.8,73.5L551.8,75.3L554.5,74.6L553.5,72.1L557.5,70.2L557.5,69.1L563.7,69.5L564.6,74.9L570.3,75.3L570.2,78.0L568.7,78.5L568.4,80.6L574.1,80.4L576.2,85.4L577.2,85.6L579.5,85.2L579.3,82.0L582.6,81.6L582.6,78.1L594.1,78.4L592.9,81.7L598.6,82.7L606.4,78.4L610.4,86.0L609.4,88.8L609.9,90.9L607.2,92.1L608.7,95.6L611.3,94.2L611.2,96.7L614.6,98.8L621.6,97.5L621.6,93.1L627.5,94.4L637.6,92.6L639.1,96.4L638.6,103.9L642.3,102.6L650.2,104.4L651.0,106.1L652.6,105.6L653.5,107.9L663.0,108.3Z", "KZ-10": "M847.7,174.8L847.6,176.2L849.5,178.3L849.5,180.6L848.6,180.8L851.1,183.4L849.4,186.1L850.9,187.2L850.0,187.2L849.7,190.6L848.6,191.9L844.9,189.9L841.5,190.2L843.2,193.2L839.1,192.6L836.8,193.8L837.0,195.2L842.4,197.3L841.3,202.9L850.5,206.3L851.1,208.9L850.1,209.4L851.4,210.9L850.7,212.9L852.6,214.1L852.4,215.4L857.0,217.4L859.0,219.6L858.1,221.1L859.7,222.9L861.8,224.1L863.2,223.1L866.6,226.9L867.3,225.4L870.2,225.8L872.9,230.0L874.2,229.0L876.7,229.4L876.9,230.6L874.8,233.8L877.2,240.4L879.7,238.9L884.4,239.9L883.3,245.7L887.3,253.4L891.8,254.1L892.2,256.7L896.6,260.4L892.0,265.2L890.6,273.2L884.5,276.6L882.3,288.2L889.3,295.4L886.4,301.8L882.2,301.9L881.5,307.3L880.2,309.0L874.9,328.1L869.9,340.0L868.5,346.4L865.6,347.8L865.9,353.0L863.8,359.4L864.3,362.3L860.5,358.3L860.6,354.2L857.0,349.9L854.8,341.9L846.4,332.4L845.8,330.6L848.0,326.9L847.0,328.1L844.9,327.8L843.1,330.0L844.1,326.6L841.6,329.3L840.9,327.1L839.6,328.0L836.9,325.4L830.2,325.3L815.1,317.4L814.0,314.4L809.6,312.7L799.2,317.5L791.6,306.7L780.9,307.9L779.7,304.8L776.7,304.5L768.5,297.7L764.6,302.7L761.5,299.4L758.0,303.5L751.8,302.1L746.5,304.2L742.7,303.3L741.3,306.6L734.3,303.1L731.9,300.7L733.5,299.1L734.0,293.7L738.5,294.6L736.4,286.4L738.1,278.7L740.0,278.9L740.5,275.6L741.8,275.1L741.2,272.9L745.3,271.0L741.0,269.8L738.2,266.3L738.6,265.1L740.7,264.8L740.8,263.9L736.7,263.3L732.9,259.0L734.5,258.8L734.8,256.2L736.2,255.5L740.9,255.9L744.7,250.9L745.1,246.9L744.1,242.8L734.3,244.3L733.1,243.1L733.2,237.1L737.9,236.0L734.8,233.1L734.8,230.8L729.1,227.2L727.2,223.8L727.6,221.8L733.3,219.1L741.0,219.7L739.6,215.4L741.4,212.2L741.1,204.2L747.9,200.8L753.5,195.8L753.9,193.6L755.3,193.1L756.5,194.7L764.1,198.0L771.2,200.2L773.3,200.0L776.0,198.4L781.0,190.0L780.0,185.4L778.2,184.6L778.5,176.3L773.8,177.1L772.2,175.1L772.3,171.5L767.7,169.7L765.7,165.0L763.1,162.7L763.0,160.3L768.1,158.4L769.4,156.8L770.6,157.7L773.6,157.3L778.0,154.4L780.1,154.8L779.0,148.8L777.4,147.9L781.1,147.8L781.5,149.3L784.9,149.4L787.7,146.7L786.8,144.5L790.2,143.3L791.4,140.4L793.7,140.1L811.2,175.0L811.0,170.9L811.4,171.8L813.8,171.8L814.0,169.2L821.0,166.7L820.2,158.1L824.7,158.2L825.7,154.2L832.0,156.3L831.5,157.7L834.6,159.1L837.0,158.0L837.6,160.5L834.9,167.5L843.4,166.5L843.6,170.2L845.2,171.9L844.3,174.4L847.7,174.8Z"};
+const TY={coal:{kk:'Көмір',c:'#4A505B'},gas:{kk:'Газ',c:'#9AA3B2'},hydro:{kk:'Су',c:'#2340F0'},wind:{kk:'Жел',c:'#0FA595'},solar:{kk:'Күн',c:'#E8A400'},nuclear:{kk:'Атом',c:'#FF4F93'}};
+const BAL={plus:'Артық: басқа өңірлерге береді',eq:'Шамамен өзін қамтиды',minus:'Тапшы: басқа өңірден алады',na:'Нақты дерек жоқ'};
+const RG={
+ 'KZ-55':['Павлодар облысы','coal','plus',['Екібастұз ГРЭС-1 · көмір · 4 000 МВт','Ақсу ГРЭС · көмір · 2 450 МВт','Екібастұз ГРЭС-2 · көмір · 1 000 МВт'],'Еліміздегі ең ірі электр станциялары осында. Екібастұз көмірі бүкіл елді жарықпен қамтиды.'],
+ 'KZ-35':['Қарағанды облысы','coal','eq',['Қарағанды ЖЭО-3 · көмір','Теміртау ЖЭО · көмір','Топар ГРЭС · көмір'],'Өнеркәсіп орталығы: металлургия көп электр тұтынады.'],
+ 'KZ-62':['Ұлытау облысы','coal','na',['Жезқазған ЖЭО · көмір'],'Мыс өндірісі мен балқыту зауыттары электрді көп тұтынады.'],
+ 'KZ-10':['Абай облысы','hydro','eq',['Шүлбі СЭС · су · 702 МВт','Семей ЖЭО · көмір'],'Ертіс өзеніндегі СЭС-тер.'],
+ 'KZ-63':['Шығыс Қазақстан облысы','hydro','eq',['Бұқтырма СЭС · су · 675 МВт','Өскемен СЭС · су · 331 МВт','Өскемен ЖЭО · көмір'],'Ертіс өзені — су энергиясының басты көзі.'],
+ 'KZ-11':['Ақмола облысы','coal','na',['Степногорск ЖЭО · көмір','Ерейментау ЖЭС · жел'],'Ерейментау — желді аймақ, мұнда жел станциялары бар.'],
+ 'KZ-71':['Астана қаласы','coal','minus',['Астана ЖЭО-1, ЖЭО-2, ЖЭО-3 · көмір'],'Астана өндіргенінен көп тұтынады.'],
+ 'KZ-59':['Солтүстік Қазақстан облысы','coal','eq',['Петропавл ЖЭО-2 · көмір · ≈ 540 МВт'],'Негізгі көз — көмір.'],
+ 'KZ-39':['Қостанай облысы','coal','minus',['Рудный ЖЭО · көмір','Күн және жел жобалары'],'Электрдің бір бөлігін басқа өңірлерден алады.'],
+ 'KZ-15':['Ақтөбе облысы','gas','eq',['Ақтөбе ЖЭО · газ','Жаңажол ГТЭС · газ'],'Батыс өңірлер газды пайдаланады.'],
+ 'KZ-27':['Батыс Қазақстан облысы','gas','eq',['Қарашығанақ ГТЭС · газ','Орал ГТЭС · газ'],'Қарашығанақ — ірі газ кен орны.'],
+ 'KZ-23':['Атырау облысы','gas','eq',['Атырау ЖЭО · газ'],'Мұнай-газ өңірі.'],
+ 'KZ-47':['Маңғыстау облысы','gas','eq',['МАЭК, Ақтау · газ'],'Ақтауда Қазақстанның жалғыз АЭС-і БН-350 болған (1973–1999 жылдары жұмыс істеген).'],
+ 'KZ-43':['Қызылорда облысы','gas','minus',['Қызылорда ЖЭО · газ','Күн станциялары'],'Күн шуағы көп өңір.'],
+ 'KZ-61':['Түркістан облысы','hydro','minus',['Шардара СЭС · су · ≈ 126 МВт','Күн станциялары'],'Біздің өңір! Оңтүстік өңірлер электрдің бір бөлігін солтүстіктен алады.'],
+ 'KZ-79':['Шымкент қаласы','gas','minus',['Шымкент ЖЭО-3 · газ'],'Ірі қала: тұтыну көп.'],
+ 'KZ-31':['Жамбыл облысы','gas','na',['Жамбыл ГРЭС · газ · 1 230 МВт','Жаңатас ЖЭС · жел · 100 МВт'],'Жаңатас — елдегі ірі жел станцияларының бірі.'],
+ 'KZ-19':['Алматы облысы','hydro','minus',['Қапшағай СЭС · су · 364 МВт','Мойнақ СЭС · су · 300 МВт','Үлкен · болашақ АЭС орны'],'2024 жылғы референдумнан кейін АЭС Балқаш көлінің маңында (Үлкен ауылы) салынады.'],
+ 'KZ-75':['Алматы қаласы','gas','minus',['Алматы ЖЭО-1, ЖЭО-2, ЖЭО-3 · газ, көмір'],'ЖЭО-2 көмірден газға көшірілуде.'],
+ 'KZ-33':['Жетісу облысы','wind','na',['Жоңғар қақпасы ЖЭС · жел','Текелі СЭС · су'],'Жоңғар қақпасы — елдегі ең желді жерлердің бірі.']
+};
+const PLANTS=[['Екібастұз ГРЭС-1',51.9,75.4,'coal','l',-16],['Ақсу ГРЭС',52.05,76.95,'coal','r',0],['Бұқтырма СЭС',49.65,83.35,'hydro'],['Шүлбі СЭС',50.4,81.1,'hydro'],['Қапшағай СЭС',43.9,77.1,'hydro'],['Мойнақ СЭС',43.2,78.9,'hydro'],['Шардара СЭС',41.25,67.97,'hydro'],['Жамбыл ГРЭС',43.0,71.6,'gas'],['Жаңатас ЖЭС',43.57,69.75,'wind','l',0],['Жоңғар қақпасы ЖЭС',45.25,82.4,'wind','l',-18],['Ерейментау ЖЭС',51.62,73.1,'wind','l',14],['Қарашығанақ',51.3,53.2,'gas'],['Ақтау МАЭК',43.65,51.2,'gas'],['Үлкен (АЭС орны)',45.2,73.98,'nuclear','r',18]];
+const KK=36,KC=Math.cos(48*Math.PI/180);const proj=(lat,lon)=>[(lon-46.4)*KK*KC,(55.6-lat)*KK];
+let selRg='KZ-61';
+function mapBuild(){const svg=$('#kzmap');const order=Object.keys(KZP).sort((a,b)=>['KZ-71','KZ-75','KZ-79'].includes(a)-['KZ-71','KZ-75','KZ-79'].includes(b));
+  let h=order.map(id=>{const r=RG[id];const c=r?TY[r[1]].c:'#ccc';return '<path class="rg" data-rg="'+id+'" d="'+KZP[id]+'" fill="'+c+'" fill-opacity="'+(r&&r[1]==='coal'?.55:.42)+'"><title>'+(r?r[0]:'')+'</title></path>'}).join('');
+  h+=PLANTS.map(p=>{const [x,y]=proj(p[1],p[2]);const right=p[4]?p[4]==='r':x<820;const dy=p[5]||0;return '<g class="mk2"><circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="10" fill="'+TY[p[3]].c+'"/><text x="'+(x+(right?15:-15)).toFixed(1)+'" y="'+(y+5+dy).toFixed(1)+'" text-anchor="'+(right?'start':'end')+'">'+esc(p[0])+'</text></g>'}).join('');
+  const [hx,hy]=proj(42.9,68.3);
+  svg.innerHTML=h;
+  svg.querySelectorAll('[data-rg]').forEach(pth=>pth.addEventListener('click',()=>{selRg=pth.dataset.rg;mapInfo()}));
+  $('#mleg').innerHTML=Object.keys(TY).map(k=>'<span><i style="background:'+TY[k].c+'"></i>'+TY[k].kk+'</span>').join('')+'<span style="color:var(--muted)">Өңірдің түсі — негізгі энергия көзі. Өңірді басыңыз.</span>';
+  mapInfo();}
+function mapInfo(){const r=RG[selRg];if(!r)return;$$('#kzmap [data-rg]').forEach(p=>p.classList.toggle('sel',p.dataset.rg===selRg));
+  const sel=document.querySelector('#kzmap [data-rg="'+selRg+'"]');if(sel)sel.parentNode.insertBefore(sel,sel.parentNode.querySelector('.mk2'));
+  const t=TY[r[1]];
+  $('#rinfo').innerHTML='<span class="k">Өңір</span><h4>'+esc(r[0])+'</h4><div class="kv"><b>Негізгі көз</b><span style="display:flex;align-items:center;gap:8px;font-weight:700"><i style="width:16px;height:16px;border-radius:4px;background:'+t.c+';display:inline-block"></i>'+t.kk+'</span><b>Энергия балансы</b><span class="bal '+r[2]+'">'+BAL[r[2]]+'</span></div><span class="k" style="margin-top:6px">Электр станциялары</span><ul>'+r[3].map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul><p style="margin:0;font-size:19px;line-height:1.4">'+esc(r[4])+'</p><span style="margin-top:auto;font-size:14px;color:var(--muted)">Деректер жуық. Дереккөз: ҚР Энергетика министрлігі, станциялардың ресми мәліметтері.</span>';}
+mapBuild();
+
+/* ---------- slide 16: vote ---------- */
+function vote(){const mx=Math.max(1,...G.map(g=>S.votes[g.id]));
+  $('#vote').innerHTML=G.map(g=>'<div class="vr"><span class="n"><i style="background:'+g.c+'"></i>'+g.kk+'</span><button class="vb" data-v="'+g.id+'" data-d="-1" aria-label="'+g.kk+' азайту">−</button><div class="tr"><div class="f" style="width:'+S.votes[g.id]/mx*100+'%;background:'+g.c+'"></div></div><button class="vb" data-v="'+g.id+'" data-d="1" aria-label="'+g.kk+' қосу">+</button><span class="c">'+S.votes[g.id]+'</span></div>').join('');
+  $$('#vote [data-v]').forEach(b=>b.onclick=()=>{S.votes[b.dataset.v]=Math.max(0,S.votes[b.dataset.v]+(+b.dataset.d));save();vote()});}
+$('#voteReset').onclick=()=>{G.forEach(g=>S.votes[g.id]=0);save();vote()};vote();
+
+/* ---------- reflection counters ---------- */
+if(!S.refl)S.refl={g:0,y:0,r:0};
+const RC=[['g','var(--ok)','Түсіндім','Понял · I understand'],['y','var(--warn)','Сұрағым бар','Есть вопрос · I have a question'],['r','var(--bad)','Түсінбедім','Не понял · I don\'t understand']];
+function rcDraw(){const tot=S.refl.g+S.refl.y+S.refl.r;
+  $('#rcnt').innerHTML=RC.map(x=>'<button class="rcb" data-rc="'+x[0]+'" style="background:'+x[1]+(x[0]==='y'?';color:var(--ink)':'')+'"><b>'+S.refl[x[0]]+'</b><span>'+x[2]+'<small>'+x[3]+(tot?' · '+Math.round(S.refl[x[0]]/tot*100)+' %':'')+'</small></span></button>').join('')+'<div class="rcx"><span style="font:700 18px var(--f-mono)">Барлығы: '+tot+'</span><button class="btn" id="rcUndo">Соңғысын өшіру</button><button class="btn" id="rcReset">Нөлдеу</button></div>';
+  $$('#rcnt [data-rc]').forEach(b=>b.addEventListener('pointerdown',e=>{e.preventDefault();const k=b.dataset.rc;S.refl[k]++;rcLast.push(k);save();tone(k==='g'?700:k==='y'?520:330,.1);rcDraw()}));
+  $('#rcUndo').onclick=()=>{const k=rcLast.pop();if(k&&S.refl[k]>0){S.refl[k]--;save();rcDraw()}};
+  $('#rcReset').onclick=()=>{S.refl={g:0,y:0,r:0};rcLast=[];save();rcDraw()};}
+let rcLast=[];rcDraw();
+
+/* ---------- keyboard ---------- */
+document.addEventListener('keydown',e=>{
+  const tag=(e.target.tagName||'').toLowerCase();if(tag==='input'||tag==='textarea'||tag==='select')return;
+  if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){e.preventDefault();go(S.slide+1)}
+  else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(S.slide-1)}
+  else if(e.key==='Escape'){if($('#stageOv').innerHTML)closeOv();else if(penOn)setPen(false);else closePanel()}
+  else if(e.key==='f'||e.key==='F'||e.key==='а'||e.key==='А'){$('#fsBtn').click()}
+  else if(e.key==='r'||e.key==='R'||e.key==='к'||e.key==='К'){pick('')}
+  else if(e.key==='p'||e.key==='P'){setPen(!penOn)}
+});
+
+renderScores();renderTeams();go(S.slide||0);
 })();
 </script>
 
-</body></html>
+</body>
+</html>

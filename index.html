@@ -137,18 +137,57 @@ main{flex:1;padding:6px var(--pad) 18px;display:flex;flex-direction:column;gap:c
   main.duo .ring{--size:clamp(280px,min(54vh,34vw),600px)}
   main.duo .score-btns button{height:64px}
 }
-/* multi: timer left, teams grid right */
-@media (min-width:1100px){
-  main.multi{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:clamp(24px,3vw,48px)}
-  main.multi .ring{--size:clamp(260px,min(52vh,30vw),520px)}
-  main.multi .teams{grid-template-columns:repeat(var(--cols,3),minmax(0,1fr))}
-}
-main.multi .team{padding:22px 18px 16px;gap:12px}
-main.multi .score{font-size:clamp(48px,4.6vw,86px)}
+/* multi (3+ teams): all teams in one row, equal cards, everything on one screen */
+main.multi .ring{--size:clamp(220px,min(32vh,60vw),420px)}
+main.multi .teams{grid-template-columns:repeat(var(--cols,3),minmax(0,1fr));flex:1}
+main.multi .team{padding:36px 18px 16px;gap:12px}
+main.multi .team-head{justify-content:center;text-align:center}
+main.multi .tname{margin:0}
+main.multi .badge{position:absolute;top:7px;left:50%;transform:translateX(-50%);margin:0;border-radius:0 0 10px 10px;font-size:10px;padding:4px 10px;white-space:nowrap}
+main.multi .score{flex:1;display:grid;place-items:center;font-size:clamp(40px,min(46cqi,calc(22vh / var(--rows,1))),180px)}
 main.multi .score-btns button{height:50px}
 main.multi .adv{padding:11px}
 main.multi .adv-ico{width:28px;height:28px}
 main.multi .adv-txt{font-size:13px}
+/* landscape screens: timer left, teams right, cards fill the height */
+@media (min-width:900px) and (min-aspect-ratio:1/1){
+  main.multi{display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:1fr;align-items:stretch;gap:clamp(20px,2.6vw,44px)}
+  main.multi .timer-wrap{align-self:center}
+  main.multi .ring{--size:clamp(240px,min(50vh,28vw),520px)}
+  main.multi .teams{grid-auto-rows:1fr}
+}
+
+/* team cards adapt to their own width */
+.team{container-type:inline-size}
+@container (max-width:260px){
+  .team .advs{gap:8px}
+  .team .adv{gap:6px;padding:9px}
+  .team .adv-ico{width:26px;height:26px}
+  .team .adv-txt{font-size:12px}
+  .team .adv-meta,.team .adv-note{display:none}
+  main.multi[data-rows="2"] .team .adv-ico{display:none}
+  main.multi[data-rows="2"] .team .adv{justify-content:center;min-height:44px}
+}
+@container (max-width:200px){
+  .team .advs{grid-template-columns:1fr;gap:6px}
+  .team .adv{flex-direction:row;align-items:center;gap:8px;padding:8px 10px}
+  .team .adv-ico{width:24px;height:24px}
+  main.multi[data-rows="2"] .team .adv{min-height:36px}
+}
+@container (max-width:140px){
+  .team .team-head{flex-direction:column;justify-content:center;gap:0;min-height:2.9em}
+  .team .dot{display:none}
+  .team .tname{font-size:12px;margin:0;padding:2px 4px;text-align:center;line-height:1.2}
+  .team .badge{font-size:9px;padding:3px 7px;letter-spacing:.06em}
+  .team .score-btns{gap:6px}
+  .team .score-btns button{height:44px;border-radius:14px}
+  .team .minus{width:34px;font-size:18px}
+  .team .plus{font-size:16px!important}
+  .team .advs{grid-template-columns:1fr 1fr;gap:6px}
+  .team .adv{justify-content:center;padding:0;height:42px;border-radius:14px}
+  .team .adv-txt{display:none}
+  .team .adv-ico{background:none}
+}
 
 .hint{text-align:center;font-size:12px;font-weight:700;color:#A6A9B2;letter-spacing:.04em;padding:0 var(--pad) 14px}
 
@@ -199,20 +238,34 @@ dialog[open]{display:flex;flex-direction:column;animation:dlg .25s}
 /* ---------- mobile ---------- */
 @media (max-width:720px){
   .brand small,.hint{display:none}
-  .qnav{order:3;width:100%;justify-content:space-between}
+  .top{gap:10px 12px;padding-top:14px;padding-bottom:12px}
+  .brand{gap:10px}
+  .logo{width:40px;height:40px}
+  .logo::after{inset:8px}
+  .brand h1{font-size:17px}
+  .qnav{padding:4px;gap:2px}
+  .qnav button{width:36px;height:36px}
+  .qlabel{padding:0 6px}
+  .qlabel span{display:none}
+  .qlabel b{font-size:20px}
+  .actions{width:100%}
+  .seg{margin-right:auto}
+  .banner{min-height:36px}
   .seg button{padding:0 9px}
   .ibtn{width:42px;height:42px}
   .main-btn{min-width:170px;height:60px;font-size:16px}
   .cbtn{width:52px;height:52px}
-  .teams{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .team{padding:20px 14px 14px;gap:12px}
-  .advs{grid-template-columns:1fr}
-  .adv{flex-direction:row;align-items:center;padding:10px}
-  .adv-txt{font-size:12px;flex:1}
-  .score-btns button{height:48px}
+  .teams,main.multi .teams{grid-template-columns:repeat(var(--cols-s,2),minmax(0,1fr));gap:8px}
+  .team,main.multi .team{padding:32px 10px 12px;gap:10px;border-radius:22px}
+  .team-head{justify-content:center;text-align:center}
+  .tname{margin:0}
+  .score{flex:1;display:grid;place-items:center}
+  .badge{position:absolute;top:7px;left:50%;transform:translateX(-50%);margin:0;border-radius:0 0 10px 10px;font-size:10px;padding:4px 10px;white-space:nowrap}
+  .ring,main.multi .ring{--size:clamp(200px,min(30vh,62vw),320px)}
+  main{gap:16px;padding-bottom:12px}
+  .timer-wrap{gap:12px}
   .fields{grid-template-columns:1fr}
 }
-@media (max-width:420px){ .teams{grid-template-columns:1fr} }
 :fullscreen .hint{display:none}
 </style>
 </head>
@@ -520,7 +573,7 @@ function renderTeams(){
     const adv = k => {
       const left = S.settings.uses - tm.used[k], used = left <= 0, ok = canUse(i, k);
       const meta = used ? t('used') : '+' + bonus + (S.settings.uses > 1 ? ` · ×${left}` : '');
-      return `<button class="adv${used ? ' used' : ''}" data-act="adv" data-k="${k}" data-i="${i}" ${ok ? '' : 'disabled'}>
+      return `<button class="adv${used ? ' used' : ''}" data-act="adv" data-k="${k}" data-i="${i}" title="${esc(t(k) + ' · ' + meta)}" ${ok ? '' : 'disabled'}>
         <span class="adv-ico">${ICON[k]}</span><span class="adv-txt">${esc(t(k))}</span><span class="adv-meta">${esc(meta)}</span></button>`;
     };
     const note = S.settings.onlyLosing && !lose[i];
@@ -536,7 +589,10 @@ function renderTeams(){
   stage.classList.toggle('duo', duo);
   stage.classList.toggle('multi', !duo);
   const n = S.teams.length;
-  stage.style.setProperty('--cols', n <= 4 ? 2 : n <= 6 ? 3 : 4);
+  stage.style.setProperty('--cols', n <= 4 ? n : Math.ceil(n / 2));
+  stage.style.setProperty('--cols-s', n === 4 ? 2 : Math.min(n, 3));
+  stage.style.setProperty('--rows', n <= 4 ? 1 : 2);
+  stage.dataset.rows = n <= 4 ? 1 : 2;
 }
 
 function changeScore(i, d){
